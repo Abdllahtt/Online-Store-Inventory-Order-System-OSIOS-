@@ -8,14 +8,14 @@
 
 //STRUCTS
 
-typedef struct tree{
+/*typedef struct tree{
     products *product;
     tree *left;
     tree *right;
-}tree;
+}tree;*/
 
 
-typedef struct categoryTree{
+/*typedef struct categoryTree{
     // for store structure tree in modeling section
     //idea is to create a list for main categories ex:electronics,kids section.
     //which will be linked by next ptr
@@ -23,7 +23,7 @@ typedef struct categoryTree{
     char name[MAX_NAME_LENGTH];
     categoryTree *next;
     categoryTree *down;
-}categoryTree;
+}categoryTree;*/
 
 typedef struct sll{
     //might not be used
@@ -39,11 +39,13 @@ typedef struct customers{
 }customers;
 
 typedef struct products{
-    char name[MAX_NAME_LENGTH];
     char category[MAX_NAME_LENGTH];
+    char subCategory[MAX_NAME_LENGTH];
+    char name[MAX_NAME_LENGTH];
     int ID;
     int price;
     int stock_value;
+    int status;
 }products;
 
 //ENUMERATORS
@@ -65,7 +67,10 @@ enum orderStatus{
     PROCESSED,CANCELLED
 };
 
+//FUNCTIONS
 
+void saveProductsArray(products *productsArr,int productsCount);
+void loadProductsArray(products *productsArr,int *productsCount);
 
 
 
