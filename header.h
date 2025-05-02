@@ -5,13 +5,15 @@
 #define MAX_PRODUCTS 999
 #define MAX_CUSTOMERS 500
 #define MAX_NAME_LENGTH 50
+#define MAX_CATEGORY_LENGTH 50
+#define MAX_SUBCATEGORY_LENGTH 50
 
 //STRUCTS
 
 /*typedef struct tree{
     products *product;
-    tree *left;
-    tree *right;
+    struct tree *left;
+    struct tree *right;
 }tree;*/
 
 
@@ -21,8 +23,8 @@
     //which will be linked by next ptr
     //down ptr is for the first child and the next of the first child will have his brothers and so on
     char name[MAX_NAME_LENGTH];
-    categoryTree *next;
-    categoryTree *down;
+    struct categoryTree *next;
+    struct categoryTree *down;
 }categoryTree;*/
 
 typedef struct sll{
@@ -39,8 +41,8 @@ typedef struct customers{
 }customers;
 
 typedef struct products{
-    char category[MAX_NAME_LENGTH];
-    char subCategory[MAX_NAME_LENGTH];
+    char category[MAX_CATEGORY_LENGTH];
+    char subCategory[MAX_SUBCATEGORY_LENGTH];
     char name[MAX_NAME_LENGTH];
     int ID;
     int price;
@@ -71,7 +73,8 @@ enum orderStatus{
 
 void saveProductsArray(products *productsArr,int productsCount);
 void loadProductsArray(products *productsArr,int *productsCount);
-
+char **getUniquecategories(products product[],int numproduct,int *uniqueCount);
+void displaycategories(char **categories,int count);
 
 
 #endif
