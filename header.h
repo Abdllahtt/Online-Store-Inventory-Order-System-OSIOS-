@@ -75,6 +75,7 @@ void saveProductsArray(products *productsArr,int productsCount);
 void loadProductsArray(products *productsArr,int *productsCount);
 char **getUniquecategories(products product[],int numproduct,int *uniqueCount);
 void displaycategories(char **categories,int count);
+void findname(products inventory[], int Numproduct);
 
 
 #endif

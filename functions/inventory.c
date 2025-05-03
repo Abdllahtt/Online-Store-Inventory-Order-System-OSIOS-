@@ -84,6 +84,48 @@ void displaycategories(char **categories,int count){
     }
     
 }
+//search by Id or name function and display the wanted product 
+void findname(products inventory[], int Numproduct) {
+    printf("Enter the name or ID of the wanted product: ");
+    char input[50];
+    scanf("%49s", input);
+
+    int wantedID = atoi(input);
+    bool searched = false;
+
+    if (wantedID != 0) {
+        for (int i = 0; i < Numproduct; i++) {
+            if (wantedID == inventory[i].ID) {
+                printf("Name: %s\n", inventory[i].name);
+                printf("Category: %s\n", inventory[i].category);
+                printf("Sub-category: %s\n", inventory[i].subCategory);
+                printf("ID: %d\n", inventory[i].ID);
+                printf("Price: %d\n", inventory[i].price);
+                searched = true;
+                break;
+            }
+        }
+    }
+
+    // If not found by ID or if the input was not a valid ID, search by name
+    if (!searched) {
+        for (int i = 0; i < Numproduct; i++) {
+            if (strcmp(input, inventory[i].name) == 0) {
+                printf("Name: %s\n", inventory[i].name);
+                printf("Category: %s\n", inventory[i].category);
+                printf("Sub-category: %s\n", inventory[i].subCategory);
+                printf("ID: %d\n", inventory[i].ID);
+                printf("Price: %d\n", inventory[i].price);
+                searched = true;
+                break;
+            }
+        }
+    }
+
+    if (!searched) {
+        printf("Product not found.\n");
+    }
+}
 
 
 
