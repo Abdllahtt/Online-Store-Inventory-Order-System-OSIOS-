@@ -1,30 +1,59 @@
 #include <stdio.h>
+<<<<<<< HEAD
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+=======
+#include <stdlib.h>
+>>>>>>> 48050c0 (complete saving&loading ARRAY data)
 #include "../header.h"
 
-//LOADING AND SAVING PRODUCT'S ARRAY
+//LOADING AND SAVING ARRAY
 
-void loadProductsArray(products *productsArr,int *productsCount){
-    FILE *fp=fopen("/data/products.dat","rb");
+void loadArray(const char fileName[],void *array,int elementSize,int *count){
+    FILE *fp=fopen(fileName,"rb");
 
     if(fp==NULL) printf("failed to open products.dat for reading");
 
-    fread(productsCount,sizeof(int),1,fp);
-    fread(productsArr,sizeof(products),*productsCount,fp);
+    fread(count,sizeof(int),1,fp);
+    if(*count>0){
+        array=realloc(array,(*count)*elementSize); //p
+        fread(array,elementSize,*count,fp);
+    }
     fclose(fp);
 }
 
-void saveProductsArray(products *productsArr,int productsCount){
-    FILE *fp=fopen("/data/products.dat","wb");
+void saveArray(const char fileName[],const void *array,int elementSize,int count){
+    FILE *fp=fopen(fileName,"wb");
 
     if(fp==NULL) printf("failed to open products.dat for writing");
 
-    fwrite(&productsCount,sizeof(int),1,fp);
-    fwrite(productsArr,sizeof(products),productsCount,fp);
+    fwrite(&count,sizeof(int),1,fp);
+    fwrite(array,elementSize,count,fp);
     fclose(fp);
 }
+
+//LOADING DATA
+
+void loadProducts(int arrNum,subCategories *arr[]){ //(double pointer problem)
+    for (int i = 0; i < arrNum; i++)
+    {
+        arr[i]->prodArrCount=0;
+        loadArray("products.dat",arr[i]->prod,sizeof(products),&(arr[i]->prodArrCount));
+    }
+    
+}
+
+void loadSubCategories(int arrNum,categories *arr[]){
+    for (int i = 0; i < arrNum; i++)
+    {
+        arr[i]->subCArrCount=0;
+        loadArray("subCategories.dat",arr[i]->subc,sizeof(subCategories),&(arr[i]->subCArrCount));
+        loadProducts(arr[i]->subCArrCount,&(arr[i]->subc));
+    }
+}
+
+
 
 //CRUD
 //filter categories 
@@ -128,4 +157,42 @@ void findname(products inventory[], int Numproduct) {
 }
 
 
+
+
+// STILL IN PRODUCTION---------------------------------------------------------------------------------------------------------------------------------------
+void addCategory(categories *arr,int *elementCount){
+    categories cat;
+    printf("Enter category name : \n");
+    scanf("%s",cat.name);
+    arr[*elementCount++]=cat;
+}
+
+void removeCategory(categories *arr,int *elementCount,char catName[MAX_NAME_LENGTH]){ //removing sub and prod;
+    for (int i = 0; i < *elementCount; i++)
+    {
+        if(i+1==*elementCount) break;
+        if (arr[i].name==catName)
+        {
+            categories temp=arr[i];
+            arr[i]=arr[i+1];
+            arr[i+1]=temp;
+            
+        }
+    }
+    arr=(categories *)realloc(arr,(--(*elementCount))*sizeof(categories));
+    
+}
+
+void editCategory(categories *arr,int *elementCount,char catName[MAX_NAME_LENGTH]){
+    for (int i = 0; i < *elementCount; i++)
+    {
+        if (arr[i].name==catName)
+        {
+            printf("Enter a new name : ");
+            scanf("%s",&arr[i].name);
+        }
+        
+    }
+    
+}
 
