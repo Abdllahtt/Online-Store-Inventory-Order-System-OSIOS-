@@ -1,11 +1,7 @@
 #include <stdio.h>
-<<<<<<< HEAD
 #include <stdbool.h>
-#include <stdlib.h>
 #include <string.h>
-=======
 #include <stdlib.h>
->>>>>>> 48050c0 (complete saving&loading ARRAY data)
 #include "../header.h"
 
 //LOADING AND SAVING ARRAY

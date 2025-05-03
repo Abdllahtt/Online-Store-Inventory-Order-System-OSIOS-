@@ -17,7 +17,6 @@
 }tree;*/
 
 
-<<<<<<< HEAD
 /*typedef struct categoryTree{
     // for store structure tree in modeling section
     //idea is to create a list for main categories ex:electronics,kids section.
@@ -27,11 +26,9 @@
     struct categoryTree *next;
     struct categoryTree *down;
 }categoryTree;*/
-=======
 
 
 
->>>>>>> 48050c0 (complete saving&loading ARRAY data)
 
 typedef struct sll{
     //might not be used
@@ -47,13 +44,8 @@ typedef struct customers{
 }customers;
 
 typedef struct products{
-<<<<<<< HEAD
     char category[MAX_CATEGORY_LENGTH];
     char subCategory[MAX_SUBCATEGORY_LENGTH];
-=======
-    char catName[MAX_NAME_LENGTH];
-    char subCatName[MAX_NAME_LENGTH];
->>>>>>> 48050c0 (complete saving&loading ARRAY data)
     char name[MAX_NAME_LENGTH];
     int ID;
     int price;
@@ -94,18 +86,14 @@ enum orderStatus{
 
 //FUNCTIONS
 
-<<<<<<< HEAD
-void saveProductsArray(products *productsArr,int productsCount);
-void loadProductsArray(products *productsArr,int *productsCount);
 char **getUniquecategories(products product[],int numproduct,int *uniqueCount);
 void displaycategories(char **categories,int count);
 void findname(products inventory[], int Numproduct);
-=======
 void loadArray(const char fileName[],void *array,int elementSize,int *count);
 void saveArray(const char fileName[],const void *array,int elementSize,int count);
 void loadProducts(int arrNum,subCategories *arr[]);
 void loadSubCategories(int arrNum,categories *arr[]);
->>>>>>> 48050c0 (complete saving&loading ARRAY data)
+
 
 
 #endif
