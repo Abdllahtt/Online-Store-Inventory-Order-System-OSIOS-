@@ -160,21 +160,24 @@ void addCategory(categories *arr,int *elementCount){
     categories cat;
     printf("Enter category name : \n");
     scanf("%s",cat.name);
-    arr[*elementCount++]=cat;
+    arr=(categories *)realloc(arr,(++(*elementCount))*sizeof(categories));
+    arr[*elementCount-1]=cat;
 }
 
 void removeCategory(categories *arr,int *elementCount,char catName[MAX_NAME_LENGTH]){ //removing sub and prod;
     for (int i = 0; i < *elementCount; i++)
     {
         if(i+1==*elementCount) break;
-        if (arr[i].name==catName)
+        if (strcmp(arr[i].name,catName)==0)
         {
+            
             categories temp=arr[i];
             arr[i]=arr[i+1];
             arr[i+1]=temp;
             
         }
     }
+    free(arr[*(elementCount)-1].subc);
     arr=(categories *)realloc(arr,(--(*elementCount))*sizeof(categories));
     
 }
@@ -182,7 +185,7 @@ void removeCategory(categories *arr,int *elementCount,char catName[MAX_NAME_LENG
 void editCategory(categories *arr,int *elementCount,char catName[MAX_NAME_LENGTH]){
     for (int i = 0; i < *elementCount; i++)
     {
-        if (arr[i].name==catName)
+        if (strcmp(arr[i].name,catName)==0)
         {
             printf("Enter a new name : ");
             scanf("%s",&arr[i].name);
@@ -192,3 +195,65 @@ void editCategory(categories *arr,int *elementCount,char catName[MAX_NAME_LENGTH
     
 }
 
+void addSubCategory(char catName[MAX_NAME_LENGTH],categories *catArr,int elementCount){
+    int i=0;
+    while (strcmp(catArr[i].name,catName)!=0)
+    {
+        i++;
+    }
+    subCategories new;
+    printf("Enter a sub-category name : \n");
+    scanf("%s",&new.name);
+    catArr[i].subc=(subCategories *)realloc(catArr[i].subc,(++catArr[i].subCArrCount)*sizeof(subCategories));
+    catArr[i].subc[catArr[i].subCArrCount-1]=new;
+}
+
+void removeSubCategory(char catName[MAX_NAME_LENGTH],char subCatName[MAX_NAME_LENGTH],categories *catArr,int elementcount){
+        int i=0;
+    
+        while(strcmp(catName,catArr[i].name)!=0)
+        {
+            i++;
+        }
+        
+        for (int j = 0; j < catArr[i].subCArrCount; i++)
+        {
+            if(j+1==catArr[i].subCArrCount) break;
+            if (strcmp(catArr[i].subc[j].name,subCatName)==0)
+            {
+                subCategories temp=catArr[i].subc[j];
+                catArr[i].subc[j]=catArr[i].subc[j+1];
+                catArr[i].subc[j+1]=temp;
+                
+            }
+            
+        }
+        
+        catArr[i].subc=(subCategories *) realloc(catArr[i].subc,(--catArr[i].subCArrCount)*sizeof(subCategories));
+    
+
+}
+
+void editSubCategory(char catName[MAX_NAME_LENGTH],char subCatName[MAX_NAME_LENGTH],categories *catArr,int elementcount){
+
+    int i=0;
+    while (strcmp(catArr[i].name,catName)!=0)
+    {
+        i++;
+    }
+
+    for (int j = 0; j < catArr[i].subCArrCount; j++)
+    {
+        if (strcmp(subCatName,catArr[i].subc[j].name)==0)
+        {
+            printf("Enter a new name : \n");
+            scanf("%s",&catArr[i].subc[j].name);
+        }
+        
+    }
+}
+
+
+void addProduct(){}
+void removeProduct(){}
+void editProduct(){ }
