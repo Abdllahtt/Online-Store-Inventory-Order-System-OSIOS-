@@ -1,5 +1,9 @@
 #ifndef STRUCTURES_H
 #define STRUCTURES_H
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+
 //CONSTANTS
 
 #define MAX_PRODUCTS 999
@@ -27,18 +31,18 @@
     struct categoryTree *down;
 }categoryTree;*/
 
-typedef struct sll{
-    //might not be used
-}sll;
+
 
 typedef struct warehouse{
     //might not be used
 }warehouse;
 
-typedef struct customers{
+typedef struct customer {
+    int id;
     char name[MAX_NAME_LENGTH];
-    int ID;
-}customers;
+    char **products;
+    int num_products;
+} Customer;
 
 typedef struct products{
     char category[MAX_CATEGORY_LENGTH];
@@ -68,14 +72,67 @@ enum orderStatus{
     PENDING,
     PROCESSED,CANCELLED
 };
+typedef struct Node {
+    Customer data;
+    struct Node* next;
+} Node;
 
+// Define the structure for the queue
+typedef struct {
+    Node* front;
+    Node* rear;
+    int size;
+} CustomerQueue;
 //FUNCTIONS
 
 void saveProductsArray(products *productsArr,int productsCount);
+
+
+
 void loadProductsArray(products *productsArr,int *productsCount);
+
+
+//get an array of categories from the products array without occurences 
 char **getUniquecategories(products product[],int numproduct,int *uniqueCount);
+
+
+//displays categories 
 void displaycategories(char **categories,int count);
+
+
+//search a product by name or Id 
 void findname(products inventory[], int Numproduct);
+
+
+//this function let you add product to the array "cart or product " associated to a customers 
+int add_product_cart(Customer *customer, const char *product_name);
+
+bool isEmpty(CustomerQueue* queue);
+
+//innit customers queue
+CustomerQueue* createCustomerQueue();
+
+
+//add a customer to the queue 
+void enqueueCustomer(CustomerQueue* queue, Customer customer);
+
+
+
+
+//remove a customer from the queue 
+Customer dequeueCustomer(CustomerQueue* queue);
+
+
+//free the memory of a customer including the array of product he wants Id name 
+void freeCustomerMemory(Customer customer);
+
+//free the memory allocated for a single customer (for remove eventually)
+void freeCustomerQueue(CustomerQueue* queue);
+
+
+
+
+
 
 
 #endif
