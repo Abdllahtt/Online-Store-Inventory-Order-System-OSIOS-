@@ -54,6 +54,18 @@ typedef struct products{
     int status;
 }products;
 
+typedef struct subCategories{
+    char name[MAX_NAME_LENGTH];
+    int prodArrCount;
+    products prod[MAX_PRODUCTS];
+}subCategories;
+
+typedef struct categories{
+    char name[MAX_NAME_LENGTH];
+    int subCArrCount;
+    struct subCategories *subc;
+}categories;
+ 
 //ENUMERATORS
 
 enum customerStatus{
@@ -102,6 +114,11 @@ void displaycategories(char **categories,int count);
 
 //search a product by name or Id 
 void findname(products inventory[], int Numproduct);
+void loadArray(const char fileName[],void *array,int elementSize,int *count);
+void saveArray(const char fileName[],const void *array,int elementSize,int count);
+void loadProducts(int arrNum,subCategories *arr[]);
+void loadSubCategories(int arrNum,categories *arr[]);
+
 
 
 //this function let you add product to the array "cart or product " associated to a customers 
