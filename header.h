@@ -1,5 +1,9 @@
 #ifndef STRUCTURES_H
 #define STRUCTURES_H
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+
 //CONSTANTS
 
 #define MAX_PRODUCTS 999
@@ -29,19 +33,16 @@
 
 
 
-
-typedef struct sll{
-    //might not be used
-}sll;
-
 typedef struct warehouse{
     //might not be used
 }warehouse;
 
-typedef struct customers{
+typedef struct customer {
+    int id;
     char name[MAX_NAME_LENGTH];
-    int ID;
-}customers;
+    char **products;
+    int num_products;
+} Customer;
 
 typedef struct products{
     char category[MAX_NAME_LENGTH];
@@ -84,7 +85,17 @@ enum orderStatus{
     PROCESSED,
     CANCELLED
 };
+typedef struct Node {
+    Customer data;
+    struct Node* next;
+} Node;
 
+// Define the structure for the queue
+typedef struct {
+    Node* front;
+    Node* rear;
+    int size;
+} CustomerQueue;
 //FUNCTIONS
 
 //char **getUniquecategories(products product[],int numproduct,int *uniqueCount);
@@ -92,8 +103,7 @@ enum orderStatus{
 //void findname(products inventory[], int Numproduct);
 void loadArray(const char fileName[],void **array,int elementSize,int *count);
 void saveArray(const char fileName[],const void *array,int elementSize,int count);
-//void loadProducts(int arrNum,subCategories *arr[]);
-//void loadSubCategories(int arrNum,categories *arr[]);
+
 void addCategory(categories **arr,int *elementCount);
 void removeCategory(categories **arr,int *elementCount,char catName[MAX_NAME_LENGTH]);
 void editCategory(categories **arr,int *elementCount,char catName[MAX_NAME_LENGTH]);
@@ -102,5 +112,6 @@ void addSubCategory(char catName[MAX_NAME_LENGTH],categories **catArr,int elemen
 void removeSubCategory(char catName[MAX_NAME_LENGTH],char subCatName[MAX_NAME_LENGTH],categories **catArr,int elementcount);
 void editSubCategory(char catName[MAX_NAME_LENGTH],char subCatName[MAX_NAME_LENGTH],categories **catArr,int elementcount);
 
-void addProduct(categories **catArr,char catName[MAX_NAME_LENGTH],char subCatName[MAX_NAME_LENGTH],int elementCount);
+
+
 #endif
