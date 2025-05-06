@@ -44,8 +44,8 @@ typedef struct customers{
 }customers;
 
 typedef struct products{
-    char category[MAX_CATEGORY_LENGTH];
-    char subCategory[MAX_SUBCATEGORY_LENGTH];
+    char category[MAX_NAME_LENGTH];
+    char subCategory[MAX_NAME_LENGTH];
     char name[MAX_NAME_LENGTH];
     int ID;
     int price;
@@ -56,7 +56,7 @@ typedef struct products{
 typedef struct subCategories{
     char name[MAX_NAME_LENGTH];
     int prodArrCount;
-    products prod[MAX_PRODUCTS];
+    products *prod;
 }subCategories;
 
 typedef struct categories{
@@ -81,19 +81,26 @@ enum productStatus{
 
 enum orderStatus{
     PENDING,
-    PROCESSED,CANCELLED
+    PROCESSED,
+    CANCELLED
 };
 
 //FUNCTIONS
 
-char **getUniquecategories(products product[],int numproduct,int *uniqueCount);
-void displaycategories(char **categories,int count);
-void findname(products inventory[], int Numproduct);
-void loadArray(const char fileName[],void *array,int elementSize,int *count);
+//char **getUniquecategories(products product[],int numproduct,int *uniqueCount);
+//void displaycategories(char **categories,int count);
+//void findname(products inventory[], int Numproduct);
+void loadArray(const char fileName[],void **array,int elementSize,int *count);
 void saveArray(const char fileName[],const void *array,int elementSize,int count);
-void loadProducts(int arrNum,subCategories *arr[]);
-void loadSubCategories(int arrNum,categories *arr[]);
+//void loadProducts(int arrNum,subCategories *arr[]);
+//void loadSubCategories(int arrNum,categories *arr[]);
+void addCategory(categories **arr,int *elementCount);
+void removeCategory(categories **arr,int *elementCount,char catName[MAX_NAME_LENGTH]);
+void editCategory(categories **arr,int *elementCount,char catName[MAX_NAME_LENGTH]);
 
+void addSubCategory(char catName[MAX_NAME_LENGTH],categories **catArr,int elementCount);
+void removeSubCategory(char catName[MAX_NAME_LENGTH],char subCatName[MAX_NAME_LENGTH],categories **catArr,int elementcount);
+void editSubCategory(char catName[MAX_NAME_LENGTH],char subCatName[MAX_NAME_LENGTH],categories **catArr,int elementcount);
 
-
+void addProduct(categories **catArr,char catName[MAX_NAME_LENGTH],char subCatName[MAX_NAME_LENGTH],int elementCount);
 #endif
