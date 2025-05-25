@@ -73,8 +73,8 @@ typedef struct orders{
 }order;
 
 typedef struct products{
-    char category[MAX_CATEGORY_LENGTH];
-    char subCategory[MAX_SUBCATEGORY_LENGTH];
+    char category[MAX_NAME_LENGTH];
+    char subCategory[MAX_NAME_LENGTH];
     char name[MAX_NAME_LENGTH];
     int ID;
     int price;
@@ -85,7 +85,7 @@ typedef struct products{
 typedef struct subCategories{
     char name[MAX_NAME_LENGTH];
     int prodArrCount;
-    products prod[MAX_PRODUCTS];
+    products *prod;
 }subCategories;
 
 typedef struct categories{
@@ -94,6 +94,25 @@ typedef struct categories{
     struct subCategories *subc;
 }categories;
  
+//ENUMERATORS
+
+enum customerStatus{
+    WAITING,
+    UNDER_TREATMENT,
+    DISCHARGED
+};
+
+enum productStatus{
+    AVAILABLE,
+    OUT_OF_STOCK,
+    DISCONTINUED
+};
+
+enum orderStatus{
+    PENDING,
+    PROCESSED,
+    CANCELLED
+};
 
 typedef struct Node {
     order data;
