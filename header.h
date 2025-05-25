@@ -31,18 +31,46 @@
     struct categoryTree *down;
 }categoryTree;*/
 
+//ENUMERATORS
 
+typedef enum {
+    WAITING,
+    UNDER_TREATMENT,
+    DISCHARGED
+}customerStatus;
+
+ typedef enum {
+    AVAILABLE,
+    OUT_OF_STOCK,
+    DISCONTINUED
+}productStatus;
+
+typedef enum {
+    PENDING,
+    PROCESSED,
+    CANCELLED
+}OrderStatus;
 
 typedef struct warehouse{
     //might not be used
 }warehouse;
 
 typedef struct customer {
-    int id;
+    int ID;
     char name[MAX_NAME_LENGTH];
     char **products;
     int num_products;
+    int product_capacity;
+    customerStatus customer_status;
 } Customer;
+typedef struct orders{
+    int ID;
+    char name[MAX_NAME_LENGTH];
+    char **products;
+    int num_products;
+    int product_capacity;
+    OrderStatus order_status;
+}order;
 
 typedef struct products{
     char category[MAX_CATEGORY_LENGTH];
@@ -51,7 +79,7 @@ typedef struct products{
     int ID;
     int price;
     int stock_value;
-    int status;
+    productStatus product_status;
 }products;
 
 typedef struct subCategories{
@@ -66,35 +94,18 @@ typedef struct categories{
     struct subCategories *subc;
 }categories;
  
-//ENUMERATORS
 
-enum customerStatus{
-    WAITING,
-    UNDER_TREATMENT,
-    DISCHARGED
-};
-
-enum productStatus{
-    AVAILABLE,
-    OUT_OF_STOCK,
-    DISCONTINUED
-};
-
-enum orderStatus{
-    PENDING,
-    PROCESSED,CANCELLED
-};
 typedef struct Node {
-    Customer data;
+    order data;
     struct Node* next;
 } Node;
 
 // Define the structure for the queue
-typedef struct {
+typedef struct CustomerQueue { // Renaming to OrderQueue for consistency
     Node* front;
     Node* rear;
     int size;
-} CustomerQueue;
+} OrderQueue;
 //FUNCTIONS
 
 void saveProductsArray(products *productsArr,int productsCount);
@@ -111,45 +122,54 @@ char **getUniquecategories(products product[],int numproduct,int *uniqueCount);
 //displays categories 
 void displaycategories(char **categories,int count);
 
+// display products
+void displayProduct(const products* product);
 
 //search a product by name or Id 
-void findname(products inventory[], int Numproduct);
+products  *findproduct(products inventory[], int Numproduct);
+void assigne_status(products  *product);
 void loadArray(const char fileName[],void *array,int elementSize,int *count);
 void saveArray(const char fileName[],const void *array,int elementSize,int count);
 void loadProducts(int arrNum,subCategories *arr[]);
 void loadSubCategories(int arrNum,categories *arr[]);
 
+//CRUD categories 
+void addCategory(categories *arr,int *elementCount);
+void removeCategory(categories *arr,int *elementCount,char catName[MAX_NAME_LENGTH]);
+void editCategory(categories *arr,int *elementCount,char catName[MAX_NAME_LENGTH]);
+
+//CRUD subcategories
+void addSubCategory(char catName[MAX_NAME_LENGTH],categories *catArr,int elementCount);
+void removeSubCategory(char catName[MAX_NAME_LENGTH],char subCatName[MAX_NAME_LENGTH],categories *catArr,int elementcount);
+void editSubCategory(char catName[MAX_NAME_LENGTH],char subCatName[MAX_NAME_LENGTH],categories *catArr,int elementcount);
 
 
-//this function let you add product to the array "cart or product " associated to a customers 
-int add_product_cart(Customer *customer, const char *product_name);
+//create an order node in thr queue 
+order* createOrder(int id, const char* name);
 
-bool isEmpty(CustomerQueue* queue);
+//add product to the subarray in the order's node 
+int add_product_cart(order *current_order, const char *product_name);
 
-//innit customers queue
-CustomerQueue* createCustomerQueue();
+// function to see if a order's queue is empty
+bool isEmpty(OrderQueue* queue) {
+    return (queue->size == 0);
+}
 
+// create the order's queue
+ OrderQueue* create_OrderQueue();
 
-//add a customer to the queue 
-void enqueueCustomer(CustomerQueue* queue, Customer customer);
-
-
-
-
-//remove a customer from the queue 
-Customer dequeueCustomer(CustomerQueue* queue);
-
-
-//free the memory of a customer including the array of product he wants Id name 
-void freeCustomerMemory(Customer customer);
-
-//free the memory allocated for a single customer (for remove eventually)
-void freeCustomerQueue(CustomerQueue* queue);
+// enqueue into the order's queue 
+void enqueueOrder(OrderQueue* queue, order current_order);
 
 
+//dequeue order from the order's queue 
+order dequeueOrder(OrderQueue* queue);
 
+// free a queue node (order)
+void freeOrderMemory(order current_order);
 
-
+// free the entire queue 
+void freeOrderQueue(OrderQueue* queue);
 
 
 #endif

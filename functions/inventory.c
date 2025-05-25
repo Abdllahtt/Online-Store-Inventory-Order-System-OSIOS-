@@ -110,49 +110,56 @@ void displaycategories(char **categories,int count){
     
 }
 //search by Id or name function and display the wanted product 
-void findname(products inventory[], int Numproduct) {
+products* findProduct(products inventory[], int Numproduct) {
     printf("Enter the name or ID of the wanted product: ");
     char input[50];
     scanf("%49s", input);
 
     int wantedID = atoi(input);
-    bool searched = false;
 
     if (wantedID != 0) {
         for (int i = 0; i < Numproduct; i++) {
             if (wantedID == inventory[i].ID) {
-                printf("Name: %s\n", inventory[i].name);
-                printf("Category: %s\n", inventory[i].category);
-                printf("Sub-category: %s\n", inventory[i].subCategory);
-                printf("ID: %d\n", inventory[i].ID);
-                printf("Price: %d\n", inventory[i].price);
-                searched = true;
-                break;
+                return &inventory[i]; // Return a pointer to the found struct
             }
         }
     }
 
     // If not found by ID or if the input was not a valid ID, search by name
-    if (!searched) {
-        for (int i = 0; i < Numproduct; i++) {
-            if (strcmp(input, inventory[i].name) == 0) {
-                printf("Name: %s\n", inventory[i].name);
-                printf("Category: %s\n", inventory[i].category);
-                printf("Sub-category: %s\n", inventory[i].subCategory);
-                printf("ID: %d\n", inventory[i].ID);
-                printf("Price: %d\n", inventory[i].price);
-                searched = true;
-                break;
-            }
+    for (int i = 0; i < Numproduct; i++) {
+        if (strcmp(input, inventory[i].name) == 0) {
+            return &inventory[i]; // Return a pointer to the found struct
         }
     }
 
-    if (!searched) {
+    return NULL; // Return NULL if the product is not found
+}
+
+// Function to display the details of a product struct
+void displayProduct(const products* product) {
+    if (product != NULL) {
+        printf("Name: %s\n", product->name);
+        printf("Category: %s\n", product->category);
+        printf("Sub-category: %s\n", product->subCategory);
+        printf("ID: %d\n", product->ID);
+        printf("Price: %d\n", product->price);
+    } else {
         printf("Product not found.\n");
     }
 }
-
-
+void assigne_status(products  *product){
+    if(product->stock_value ==0){
+        product ->product_status=OUT_OF_STOCK;
+    }
+    else if(product->stock_value ==-1){
+        product->product_status=DISCONTINUED;
+        
+    }
+    else if(product->stock_value >0){
+        product ->product_status=AVAILABLE;
+        
+    }
+}
 
 
 // STILL IN PRODUCTION---------------------------------------------------------------------------------------------------------------------------------------
