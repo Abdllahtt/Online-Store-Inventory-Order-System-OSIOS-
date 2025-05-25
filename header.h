@@ -57,9 +57,6 @@ typedef struct warehouse{
 typedef struct customer {
     int ID;
     char name[MAX_NAME_LENGTH];
-    char **products;
-    int num_products;
-    int product_capacity;
     customerStatus customer_status;
 } Customer;
 typedef struct orders{
