@@ -53,25 +53,25 @@ void saveSubCategories(int arrNum,categories *arr){
 
 //LOADING DATA
 
-void loadProducts(int arrNum,subCategories *arr[]){ //(double pointer problem)
+void loadProducts(int arrNum,subCategories *arr){ //(double pointer problem)
     char fileName[MAX_NAME_LENGTH];
     for (int i = 0; i < arrNum; i++)
     {
-        arr[i]->prodArrCount=0;
+        arr[i].prodArrCount=0;
         sprintf(fileName,"products_%d.dat",i);
-        loadArray(fileName,&arr[i]->prod,sizeof(products),&(arr[i]->prodArrCount));
+        loadArray(fileName,&arr[i].prod,sizeof(products),&(arr[i].prodArrCount));
     }
     
 }
 
-void loadSubCategories(int arrNum,categories *arr[]){
+void loadSubCategories(int arrNum,categories *arr){
     char fileName[MAX_NAME_LENGTH];
     for (int i = 0; i < arrNum; i++)
     {
-        arr[i]->subCArrCount=0;
+        arr[i].subCArrCount=0;
         sprintf(fileName,"subCategories_%d.dat",i);
-        loadArray(fileName,&arr[i]->subc,sizeof(subCategories),&(arr[i]->subCArrCount));
-        loadProducts(arr[i]->subCArrCount,(arr[i]->subc));
+        loadArray(fileName,&arr[i].subc,sizeof(subCategories),&(arr[i].subCArrCount));
+        loadProducts(arr[i].subCArrCount,&(arr[i].subc));
     }
 }
 
@@ -333,7 +333,7 @@ void editSubCategory(char catName[MAX_NAME_LENGTH],char subCatName[MAX_NAME_LENG
 }
 
 
-void addProduct(categories **catArr,char catName[MAX_NAME_LENGTH],char subCatName[MAX_NAME_LENGTH],int elementCount){
+void addProduct(categories **catArr,char catName[MAX_NAME_LENGTH],char subCatName[MAX_NAME_LENGTH],int elementCount,products **allProducts,int *allProductsCount){
     int i=0;
     while (strcmp((*catArr)[i].name,catName)!=0 && i!=elementCount)
     {
@@ -376,29 +376,36 @@ void addProduct(categories **catArr,char catName[MAX_NAME_LENGTH],char subCatNam
 
             (*catArr)[i].subc[j].prod=(products *) realloc((*catArr)[i].subc[j].prod,(++(*catArr)[i].subc[j].prodArrCount)*sizeof(products));
             (*catArr)[i].subc[j].prod[(*catArr)[i].subc[j].prodArrCount-1]=new;
-            
-        }
-        
-    }
-    
-
-
-}
-
-void removeProduct(categories **catArr,char prodName[MAX_NAME_LENGTH],int elementCount,products **productsArr,int productsArrSize){
-    char cat[MAX_NAME_LENGTH];
-    char subCat[MAX_NAME_LENGTH];
-    for (int i = 0; i < productsArrSize; i++)
-    {
-        if(strcmp(prodName,(*productsArr)[i].name)==0){
-            strcpy(cat,(*productsArr)[i].category);
-            strcpy(subCat,(*productsArr)[i].subCategory);
-        }else{
-            printf("Product not found");
+            *allProducts=(products *) realloc(*allProducts,++*allProductsCount);
+            (*allProducts)[*allProductsCount-1]=new;
             return;
         }
         
     }
+    printf("Sub-Category not found");
+
+
+}
+
+void removeProduct(categories **catArr,char prodName[MAX_NAME_LENGTH],int elementCount,products **allProducts,int *allProductsCount){
+    char cat[MAX_NAME_LENGTH];
+    char subCat[MAX_NAME_LENGTH];
+    for (int i = 0; i < *allProductsCount; i++)
+    {
+        if(strcmp(prodName,(*allProducts)[i].name)==0){
+            strcpy(cat,(*allProducts)[i].category);
+            strcpy(subCat,(*allProducts)[i].subCategory);
+            products temp=(*allProducts)[i];
+            (*allProducts)[i]=(*allProducts)[i+1];
+            (*allProducts)[i+1]=temp;
+        }
+        
+    }
+    if(strcmp(prodName,(*allProducts)[*allProductsCount-1].name)!=0){
+        printf("Product not found");
+        return;
+    }
+    *allProducts=(products *) realloc(*allProducts,--*allProductsCount); 
     int i=0;
     while (strcmp((*catArr)[i].name,cat)!=0)
     {
@@ -413,7 +420,7 @@ void removeProduct(categories **catArr,char prodName[MAX_NAME_LENGTH],int elemen
     int productSize=(*catArr)[i].subc->prodArrCount;
     for (int k = 0; k < productSize; k++)
     {
-        if(k == productSize) break;
+        if(k+1 == productSize) break;
         if(strcmp((*catArr)[i].subc[j].prod[k].name,prodName)==0){
         products tmp;
         tmp=(*catArr)[i].subc[j].prod[k];
@@ -422,18 +429,42 @@ void removeProduct(categories **catArr,char prodName[MAX_NAME_LENGTH],int elemen
         }              
     }
     (*catArr)[i].subc[j].prod=(products *) realloc((*catArr)[i].subc[j].prod,(--(*catArr)[i].subc[j].prodArrCount)*sizeof(products));
+    
 
 }
-
-void editProduct(categories **catArr,char prodName[MAX_NAME_LENGTH],int elementCount,products **productsArr,int productsArrSize){
+// we have to add product staaaaaaaaaaaaaaatuuuuuuuuuuuus
+void editProduct(categories **catArr,char prodName[MAX_NAME_LENGTH],int elementCount,products **allProducts,int allProductsCount){
     char cat[MAX_NAME_LENGTH];
     char subCat[MAX_NAME_LENGTH];
-    for (int i = 0; i < productsArrSize; i++)
+    for (int i = 0; i < allProductsCount; i++)
     {
     
-        if(strcmp(prodName,(*productsArr)[i].name)==0){
-            strcpy(cat,(*productsArr)[i].category);
-            strcpy(subCat,(*productsArr)[i].subCategory);
+        if(strcmp(prodName,(*allProducts)[i].name)==0){
+            strcpy(cat,(*allProducts)[i].category);
+            strcpy(subCat,(*allProducts)[i].subCategory);
+            printf("1- Edit name.\n");
+            printf("2- Edit price.\n");
+            printf("3- Edit stock value.\n");
+            int edit;
+            scanf("%d",&edit);
+            switch (edit)
+            {
+            case 1:
+                printf("Enter a new name");
+                scanf("%s",(*allProducts)[i].name);
+                break;
+            case 2:
+                printf("Enter a new price");
+                scanf("%d",&(*allProducts)[i].price);
+                break;
+            case 3:
+                printf("Enter a new stock value");
+                scanf("%d",&(*allProducts)[i].stock_value);
+                break;
+            
+            default:
+                break;
+            }
         }else{
             printf("Product does not exist");
             return;

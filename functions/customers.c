@@ -4,6 +4,14 @@
 #include <stdbool.h>
 #include <string.h>
 
+// Save Data
+void saveCustomers(int arrNum,Customer *arr){ 
+        saveArray("customers.dat",arr,sizeof(Customer),arrNum);
+}
+// Load Data
+void loadProducts(int *arrNum,Customer **arr){ //(double pointer problem)
+        loadArray("customers.dat",arr,sizeof(Customer),arrNum);
+}
 // Add customers
 
 void addCustomer(Customer *customerArr,int *elementCount){
@@ -55,10 +63,21 @@ void editCustomer(Customer *customerArr,int *elementCount,char cusName[MAX_NAME_
     {
         if (strcmp(customerArr[i].name,cusName)==0)
         {
-            printf("Enter new customer name:\n");
-            scanf("%s",customerArr[i].name);
-            printf("Enter new customer ID:\n");
-            scanf("%d",customerArr[i].ID);
+            printf("1- Edit name.\n");
+            printf("2- Edit ID.\n");
+            int edit;
+            scanf("%d",edit);
+            switch (edit)
+            {
+            case 1:
+                printf("Enter a new name");
+                scanf("%s",customerArr[i].name);
+                break;
+            case 2:
+                printf("Enter a new name");
+                scanf("%d",customerArr[i].ID);
+                break;
+            }
             return;       
         }
         

@@ -5,27 +5,13 @@
 
 
 int main(){
+    Customer *customerArr=(Customer *) malloc(sizeof(Customer));
+    int customerCount=0;
+    products *allProducts=(products *) malloc(sizeof(products));
+    int productsCount=0;
     categories *categoryArr=(categories *) malloc(sizeof(categories));
     int categoryCount=0;
     categoryArr->subc=(subCategories *) malloc(sizeof(subCategories));
-    addCategory(&categoryArr,&categoryCount);
-    printf("%d",categoryCount);
-    addCategory(&categoryArr,&categoryCount);
-    printf("%d",categoryCount);
-    addCategory(&categoryArr,&categoryCount);
-    printf("%d",categoryCount);
-    
-
-    for (int i = 0; i < categoryCount; i++)
-    {
-        printf("%d %s \n",categoryCount,categoryArr[i].name);
-    }
-    char hh[MAX_NAME_LENGTH]="sub";
-    char gg[MAX_NAME_LENGTH]="cat";
-    addSubCategory(gg,&categoryArr,categoryCount);
-    addProduct(&categoryArr,gg,hh,categoryCount);
-    //loadArray("categories.dat",(void**)&categoryArr,sizeof(categories),&categoryCount);
-
     
     
     return 0;
