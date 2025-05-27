@@ -63,10 +63,10 @@ int main(){
             break;
         case 7:
             clearScreen();
+            manageOrder(allProducts,productsCount,myQueue);
             break;
         case 8:
             clearScreen();
-            manageOrder(allProducts,productsCount,myQueue);
             break;
         case 0:
             p=0;
