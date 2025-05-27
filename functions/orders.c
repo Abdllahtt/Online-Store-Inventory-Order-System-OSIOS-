@@ -28,7 +28,7 @@ order* createOrder(int id, const char* name) {
 // --- MODIFIED add_product_cart function ---
 int add_product_cart(order *current_order, products inventory[], int numProductsInInventory) {
     // findProduct will prompt the user for input
-    products *productToAdd = findProduct(inventory, numProductsInInventory);
+    products *productToAdd = findproduct(inventory, numProductsInInventory);
 
     if (productToAdd == NULL) {
         printf("Error: Product not found in inventory.\n");
@@ -382,7 +382,7 @@ void cancelOrderById(OrderQueue* queue, int orderId,products inventory[],int num
     // Return stock to inventory if it was already deducted (i.e., order was being processed)
     if (ord->order_status == PROCESSING) { // If it was processed, return stock.
         for (int i = 0; i < ord->num_products; i++) {
-            products *invProduct = findProduct(inventory, numProductsInInventory); // This will re-prompt, which is not ideal for auto-return
+            products *invProduct = findproduct(inventory, numProductsInInventory); // This will re-prompt, which is not ideal for auto-return
             // To make this automatic without user input for every item, you'd need
             // a findProductByName(const char* name) that doesn't prompt.
             // For now, let's assume findProduct gives the correct result or you

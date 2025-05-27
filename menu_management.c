@@ -411,7 +411,7 @@ void saveStack(history *top){
     fclose(fp);
 }
 
-void manageOrder(products *allProducts,int productsCount,OrderQueue* myQueue ){
+int manageOrder(products *allProducts,int productsCount,OrderQueue* myQueue ){
     if (myQueue == NULL) {
         return 1; // Exit if queue creation fails
     }

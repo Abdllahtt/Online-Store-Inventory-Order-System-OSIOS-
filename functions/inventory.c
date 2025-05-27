@@ -110,7 +110,7 @@ void displayProducts(char subCatName[MAX_NAME_LENGTH],products *prods,int count)
     
 }
 //search by Id or name function and display the wanted product 
-products* findProduct(products inventory[], int Numproduct) {
+products* findproduct(products inventory[], int Numproduct) {
     printf("Enter the name or ID of the wanted product: \n");
     char input[50];
     scanf("%49s", input);

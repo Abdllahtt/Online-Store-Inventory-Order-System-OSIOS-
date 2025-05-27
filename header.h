@@ -207,6 +207,7 @@ void markOrderSucceededById(OrderQueue* queue, int orderId);
 void cancelOrderById(OrderQueue* queue, int orderId,products inventory[],int numProductsInInventory);
 
 //menu management functions
+int manageOrder(products *allProducts,int productsCount,OrderQueue* myQueue );
 void productManagement(categories **catArr,int elementCount,products **allProducts,int *allProductsCount,history **top);
 void customerManagement(Customer **customerArr,int *elementCount);
 void subCategoriesManagement(categories **catArr,int elementCount);
