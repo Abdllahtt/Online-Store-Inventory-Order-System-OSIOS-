@@ -61,8 +61,9 @@ void loadProducts(int arrNum,subCategories **arr){ //(double pointer problem)
     for (int i = 0; i < arrNum; i++)
     {
         (*arr)[i].prodArrCount=0;
+        (*arr)[i].prod=(products *)malloc(sizeof(products));
         sprintf(fileName,"products_%d.dat",i);
-        loadArray(fileName,(void **)&(*arr)[i].prod,sizeof(products),&((*arr)[i].prodArrCount));
+        loadArray(fileName,(void **)&((*arr)[i].prod),sizeof(products),&((*arr)[i].prodArrCount));
     }
     
 }
@@ -72,6 +73,7 @@ void loadSubCategories(int arrNum,categories **arr){
     for (int i = 0; i < arrNum; i++)
     {
         (*arr)[i].subCArrCount=0;
+        (*arr)[i].subc=(subCategories *)malloc(sizeof(subCategories));
         sprintf(fileName,"subCategories_%d.dat",i);
         loadArray(fileName,(void **)&((*arr)[i].subc),sizeof(subCategories),&((*arr)[i].subCArrCount));
         loadProducts((*arr)[i].subCArrCount,&((*arr)[i].subc));

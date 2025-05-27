@@ -14,6 +14,8 @@ int main(){
     categories *categoryArr=(categories *) malloc(sizeof(categories));
     int categoryCount=0;
     categoryArr->subc=(subCategories *) malloc(sizeof(subCategories));
+    loadArray("customers.dat",(void **)&customerArr,sizeof(Customer),&customerCount);
+    loadArray("allProducts.dat",(void **)&allProducts,sizeof(products),&productsCount);
     loadArray("categories.dat",(void **)&categoryArr,sizeof(categories),&categoryCount);
     loadSubCategories(categoryCount,&categoryArr);
     history *sTop=NULL;
@@ -87,6 +89,8 @@ int main(){
         clearScreen();
     }
     saveStack(sTop);
+    saveArray("customers.dat",(void *)customerArr,sizeof(Customer),customerCount);
+    saveArray("allProducts.dat",(void *)allProducts,sizeof(products),productsCount);
     saveArray("categories.dat",(void *)categoryArr,sizeof(categories),categoryCount);
     saveSubCategories(categoryCount,categoryArr);
     return 0;
