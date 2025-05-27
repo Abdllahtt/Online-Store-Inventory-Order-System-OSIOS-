@@ -9,10 +9,7 @@
 void loadArray(const char fileName[],void **array,int elementSize,int *count){
     FILE *fp=fopen(fileName,"rb");
 
-    if(fp==NULL){
-         printf("failed to open %s.dat for reading",fileName);
-        return;
-    }
+    if(fp==NULL) return;
     fread(count,sizeof(int),1,fp);
     if(*count>0){
         *array=realloc(*array,(*count)*elementSize); //p

@@ -20,9 +20,12 @@ int main(){
     loadSubCategories(categoryCount,&categoryArr);
     history *sTop=NULL;
     loadStack(&sTop);
+    OrderQueue* myQueue = create_OrderQueue();
+    loadQueue(&myQueue);
+    clearScreen();
     int choice;
     int p=1;
-    OrderQueue* myQueue = create_OrderQueue();
+    
     while (p)
     {
         printf("=== Online Store Inventory & Orders System ===\n");
@@ -67,6 +70,7 @@ int main(){
             break;
         case 8:
             clearScreen();
+            displayHistory(sTop);
             break;
         case 0:
             p=0;
@@ -78,6 +82,7 @@ int main(){
         clearScreen();
     }
     saveStack(sTop);
+    saveQueue(myQueue);
     saveArray("customers.dat",(void *)customerArr,sizeof(Customer),customerCount);
     saveArray("allProducts.dat",(void *)allProducts,sizeof(products),productsCount);
     saveArray("categories.dat",(void *)categoryArr,sizeof(categories),categoryCount);

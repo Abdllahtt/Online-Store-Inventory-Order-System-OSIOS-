@@ -264,8 +264,19 @@ void browseCategories(categories *categories,int catCount,products *allProducts,
     displayCategories(categories,catCount);
     printf("Enter the number of the category you want to show: \n");
     scanf("%d",&c1);
+    if (c1==0 || c1>catCount)
+    {
+        printf("Invalid choice.\n");
+        int c5=1;
+        printf("Enter 0 to return to the main menu.\n");
+        while (c5)
+        {
+            scanf("%d",&c5);
+        }
+        return;
+    }
+    
     clearScreen();
-    printf("\n");
     if (categories[c1-1].subCArrCount==0)
     {
         printf("There are no sub-categories\n");
@@ -280,6 +291,17 @@ void browseCategories(categories *categories,int catCount,products *allProducts,
     displaySubCategories(categories[c1-1].name,categories[c1-1].subc,categories[c1-1].subCArrCount);
     printf("Enter the number of the sub-category you want to show: \n");
     scanf("%d",&c2);
+    if (c2==0 || c2>categories[c1-1].subCArrCount)
+    {
+        printf("Invalid choice.\n");
+        int c6=1;
+        printf("Enter 0 to return to the main menu.\n");
+        while (c6)
+        {
+            scanf("%d",&c6);
+        }
+        return;
+    }
     clearScreen();
     if (categories[c1-1].subc[c2-1].prodArrCount==0)
     {
@@ -294,7 +316,7 @@ void browseCategories(categories *categories,int catCount,products *allProducts,
         return;
     }
     displayProducts(categories[c1-1].subc[c2-1].name,categories[c1-1].subc[c2-1].prod,categories[c1-1].subc[c2-1].prodArrCount);
-    printf("Enter 1 to display more info about a product, any key to go back to the main menu: \n");
+    printf("Enter 1 to display more info about a product | 0 to return to the main menu: \n");
     scanf("%d",&c3);
     switch (c3)
     {
@@ -321,6 +343,7 @@ void addToHistory(history **top,char elementName[MAX_NAME_LENGTH]){
         return;
     }
     strcpy(newNode->element,elementName);
+    newNode->timeStamp= time(NULL);
     newNode->next=*top;
     *top=newNode;
     return;
@@ -350,15 +373,21 @@ int isEmptyStack(history *top){
 void displayHistory(history *top){
     if(isEmptyStack(top)==1){
         printf("History is empty\n");
+        int i=1;
+        printf("Enter 0 to return to the main menu\n");
+        while (i)
+        {
+            scanf("%d",&i);
+        }
         return;
     }
     while (top!=NULL)
     {
-        printf("- %s .\n",top->element);
+        printf("- %s | %s.\n",top->element,ctime(&(top->timeStamp)));
         top=top->next;
     }
     int c=1;
-    printf("Enter 0 to return to the main menu");
+    printf("Enter 0 to return to the main menu\n");
     while (c)
     {
         scanf("%d",&c);
@@ -407,6 +436,46 @@ void saveStack(history *top){
     {
         fwrite(&(top->element),sizeof(char)*MAX_NAME_LENGTH,1,fp);
         top=top->next;
+    }
+    fclose(fp);
+}
+void loadQueue(OrderQueue **queue){
+    FILE *fp=fopen("queue.dat","rb");
+    if (fp==NULL) return;
+    
+    while (1)
+    {
+        order data;
+        if(fread(&data,sizeof(order),1,fp)!=1)return;
+        data.products=(char **) malloc(sizeof(char *)*data.num_products);
+        for (int i = 0; i < data.num_products; i++)
+        {
+            int len;
+            fread(&len,sizeof(int),1,fp);
+            data.products[i]=(char *)malloc(sizeof(char)*len);
+            fread(data.products[i],sizeof(char),len,fp);
+        }
+        
+        enqueueOrder(*queue,data);
+        
+    }
+    fclose(fp);
+}
+void saveQueue(OrderQueue *queue){
+    FILE *fp=fopen("queue.dat","wb");
+    if(fp==NULL) return;
+    while (queue->front!=NULL)
+    {
+        
+        fwrite(&(queue->front->data),sizeof(order),1,fp);
+        for (int i = 0; i < queue->front->data.num_products; i++)
+        {
+            int len=strlen(queue->front->data.products[i])+1;
+            fwrite(&len,sizeof(int),1,fp);
+            fwrite(&(queue->front->data.products[i]),sizeof(char)*len,1,fp);
+        }
+        
+        queue->front=queue->front->next;
     }
     fclose(fp);
 }
@@ -517,6 +586,6 @@ int manageOrder(products *allProducts,int productsCount,OrderQueue* myQueue ){
         }
     } while (choice != 8);
 
-    freeOrderQueue(myQueue); // Free all allocated memory for the queue and orders
+    //freeOrderQueue(myQueue); // Free all allocated memory for the queue and orders
     return 0;
 }

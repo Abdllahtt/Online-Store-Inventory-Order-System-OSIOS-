@@ -19,6 +19,7 @@ void clearScreen();
 typedef struct stack
 {
     char element[MAX_NAME_LENGTH];
+    time_t timeStamp;
     struct stack *next;
 }history;
 
@@ -131,6 +132,8 @@ void loadProducts(int arrNum,subCategories **arr);
 void loadSubCategories(int arrNum,categories **arr);
 void loadStack(history **top);
 void saveStack(history *top);
+void loadQueue(OrderQueue **queue);
+void saveQueue(OrderQueue *queue);
 void saveProducts(int arrNum,subCategories *arr);
 void saveSubCategories(int arrNum,categories *arr);
 //CRUD categories 
