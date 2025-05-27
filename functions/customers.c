@@ -9,59 +9,66 @@ void saveCustomers(int arrNum,Customer *arr){
         saveArray("customers.dat",arr,sizeof(Customer),arrNum);
 }
 // Load Data
-void loadProducts(int *arrNum,Customer **arr){ //(double pointer problem)
-        loadArray("customers.dat",arr,sizeof(Customer),arrNum);
+void loadCustomers(int *arrNum,Customer **arr){ //(double pointer problem)
+        loadArray("customers.dat",(void **)arr,sizeof(Customer),arrNum);
 }
 // Add customers
 
-void addCustomer(Customer *customerArr,int *elementCount){
+void addCustomer(Customer **customerArr,int *elementCount){
     Customer newCustomer;
     int check=0;
     printf("Enter customer name:\n");
     scanf("%s",newCustomer.name);
-    printf("Enter customer ID:\n");
     while(1){
-        scanf("%d",newCustomer.ID);
+        printf("Enter customer ID:\n");
+        scanf("%d",&newCustomer.ID);
         for (int i = 0; i < *elementCount; i++)
         {
-            if(customerArr[i].ID==newCustomer.ID) check=1;
+            if((*customerArr)[i].ID==newCustomer.ID) check=1;
         }
         if(check==1) {printf("ID already exists"); continue;}
-        if(newCustomer.ID>9999) printf("ID must be four digits");
-        else{
+        if(newCustomer.ID>9999){
+            printf("ID must be four digits");
+        }else{
             break;
-        }
+            }
     }
-    customerArr=(Customer *)realloc(customerArr,*elementCount++);
-    customerArr[*elementCount-1]=newCustomer;
+    *customerArr=(Customer *)realloc(*customerArr,++(*elementCount));
+    (*customerArr)[*elementCount-1]=newCustomer;
     
 }
 
-void removeCustomer(Customer *customerArr,int *elementCount,char cusName[MAX_NAME_LENGTH]){
+void removeCustomer(Customer **customerArr,int *elementCount){
+    char cusName[MAX_NAME_LENGTH];
+    printf("Enter a customer name: \n");
+    scanf("%s",cusName);
     for (int i = 0; i < *elementCount; i++)
     {
-        if(i+1==elementCount) break;
-        if (strcmp(customerArr[i].name,cusName)==0)
+        if(i+1==*elementCount) break;
+        if (strcmp((*customerArr)[i].name,cusName)==0)
         {
-            Customer temp=customerArr[i];
-            customerArr[i]=customerArr[i+1];
-            customerArr[i+1]=temp;
+            Customer temp=(*customerArr)[i];
+            (*customerArr)[i]=(*customerArr)[i+1];
+            (*customerArr)[i+1]=temp;
 
         }
         
     }
-    if(strcmp(customerArr[*elementCount-1].name,cusName)!=0){
+    if(strcmp((*customerArr)[*elementCount-1].name,cusName)!=0){
         printf("Customer not found");
         return;
     }
-    customerArr=(Customer *) realloc(customerArr,--*elementCount);
+    *customerArr=(Customer *) realloc(*customerArr,--*elementCount);
     
 }
 
-void editCustomer(Customer *customerArr,int *elementCount,char cusName[MAX_NAME_LENGTH]){
+void editCustomer(Customer **customerArr,int *elementCount){
+    char cusName[MAX_NAME_LENGTH];
+    printf("Enter a customer name: \n");
+    scanf("%s",cusName);
     for (int i = 0; i < *elementCount; i++)
     {
-        if (strcmp(customerArr[i].name,cusName)==0)
+        if (strcmp((*customerArr)[i].name,cusName)==0)
         {
             printf("1- Edit name.\n");
             printf("2- Edit ID.\n");
@@ -71,11 +78,11 @@ void editCustomer(Customer *customerArr,int *elementCount,char cusName[MAX_NAME_
             {
             case 1:
                 printf("Enter a new name");
-                scanf("%s",customerArr[i].name);
+                scanf("%s",(*customerArr)[i].name);
                 break;
             case 2:
                 printf("Enter a new name");
-                scanf("%d",customerArr[i].ID);
+                scanf("%d",(*customerArr)[i].ID);
                 break;
             }
             return;       
@@ -83,5 +90,13 @@ void editCustomer(Customer *customerArr,int *elementCount,char cusName[MAX_NAME_
         
     }
     printf("Customer not found");
+    
+}
+
+void displayAllCustomers(Customer *customerArr,int elementcount){
+    for (int i = 0; i < elementcount; i++)
+    {
+        printf("- Name: %s | ID: %d \n",customerArr[i].name,customerArr[i].ID);
+    }
     
 }

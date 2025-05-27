@@ -15,6 +15,12 @@
 
 //STRUCTS
 
+typedef struct stack
+{
+    char element[MAX_NAME_LENGTH];
+    struct stack *next;
+}history;
+
 /*typedef struct tree{
     products *product;
     struct tree *left;
@@ -95,26 +101,7 @@ typedef struct categories{
     struct subCategories *subc;
 }categories;
  
-//ENUMERATORS
 
-enum customerStatus{
-    WAITING,
-    UNDER_TREATMENT,
-    DISCHARGED
-};
-
-enum productStatus{
-    AVAILABLE,
-    OUT_OF_STOCK,
-    DISCONTINUED
-};
-
-enum orderStatus{
-    PENDING,
-    PROCESSED,
-    CANCELLED,
-    SUCCEEDED
-};
 
 typedef struct Node {
     order data;
@@ -130,18 +117,7 @@ typedef struct CustomerQueue { // Renaming to OrderQueue for consistency
 //FUNCTIONS
 
 void saveProductsArray(products *productsArr,int productsCount);
-
-
-
 void loadProductsArray(products *productsArr,int *productsCount);
-
-
-//get an array of categories from the products array without occurences 
-char **getUniquecategories(products product[],int numproduct,int *uniqueCount);
-
-
-//displays categories 
-void displaycategories(char **categories,int count);
 
 // display products
 void displayProduct(const products* product);
@@ -149,22 +125,30 @@ void displayProduct(const products* product);
 //search a product by name or Id 
 products  *findproduct(products inventory[], int Numproduct);
 void assigne_status(products  *product);
-void loadArray(const char fileName[],void *array,int elementSize,int *count);
+void loadArray(const char fileName[],void **array,int elementSize,int *count);
 void saveArray(const char fileName[],const void *array,int elementSize,int count);
-void loadProducts(int arrNum,subCategories *arr[]);
-void loadSubCategories(int arrNum,categories *arr[]);
+void loadProducts(int arrNum,subCategories **arr);
+void loadSubCategories(int arrNum,categories **arr);
 
 //CRUD categories 
-void addCategory(categories *arr,int *elementCount);
-void removeCategory(categories *arr,int *elementCount,char catName[MAX_NAME_LENGTH]);
-void editCategory(categories *arr,int *elementCount,char catName[MAX_NAME_LENGTH]);
-
+void addCategory(categories **arr,int *elementCount);
+void removeCategory(categories **arr,int *elementCount);
+void editCategory(categories **arr,int *elementCount);
+void displayCategories(categories *categories,int count);
 //CRUD subcategories
-void addSubCategory(char catName[MAX_NAME_LENGTH],categories *catArr,int elementCount);
-void removeSubCategory(char catName[MAX_NAME_LENGTH],char subCatName[MAX_NAME_LENGTH],categories *catArr,int elementcount);
-void editSubCategory(char catName[MAX_NAME_LENGTH],char subCatName[MAX_NAME_LENGTH],categories *catArr,int elementcount);
-
-//    -------------from order.c--------------------------
+void addSubCategory(categories **catArr,int elementCount);
+void removeSubCategory(categories **catArr,int elementcount);
+void editSubCategory(categories **catArr,int elementcount);
+void displaySubCategories(char catName[MAX_NAME_LENGTH],subCategories *subCat,int count);
+//CRUD products
+void addProduct(categories **catArr,int elementCount,products **allProducts,int *allProductsCount);
+void removeProduct(categories **catArr,int elementCount,products **allProducts,int *allProductsCount);
+void editProduct(categories **catArr,int elementCount,products **allProducts,int allProductsCount);
+void displayProducts(char subCatName[MAX_NAME_LENGTH],products *prods,int count);
+//CRUD customer
+void addCustomer(Customer **customerArr,int *elementCount);
+void removeCustomer(Customer **customerArr,int *elementCount);
+void editCustomer(Customer **customerArr,int *elementCount);
 //create an order node in thr queue 
 order* createOrder(int id, const char* name);
 
@@ -216,5 +200,16 @@ void markOrderSucceededById(OrderQueue* queue, int orderId);
 // Simulate canceling an order by ID (returns stock)
 void cancelOrderById(OrderQueue* queue, int orderId,products inventory[],int numProductsInInventory);
 
-
+//menu management functions
+void productManagement(categories **catArr,int elementCount,products **allProducts,int *allProductsCount,history **top);
+void customerManagement(Customer **customerArr,int *elementCount);
+void subCategoriesManagement(categories **catArr,int elementCount);
+void categoriesManagement(categories **arr,int *elementCount);
+void browseCategories(categories *categories,int catCount,products *allProducts,int allProductsCount,history **top);
+void addToHistory(history **top,char elementName[MAX_NAME_LENGTH]);
+void deleteFromHistory(history **top);
+int isEmptyStack(history *top);
+void displayHistory(history *top);
+void clearBrowsingHistory(history **top);
+void displayAllCustomers(Customer *customerArr,int elementcount);
 #endif
