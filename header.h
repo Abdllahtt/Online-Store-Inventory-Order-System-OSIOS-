@@ -12,6 +12,7 @@
 #define MAX_CUSTOMERS 500
 #define MAX_NAME_LENGTH 50
 
+void clearScreen();
 
 //STRUCTS
 
@@ -114,37 +115,41 @@ typedef struct CustomerQueue { // Renaming to OrderQueue for consistency
     Node* rear;
     int size;
 } OrderQueue;
-//FUNCTIONS
 
-void saveProductsArray(products *productsArr,int productsCount);
-void loadProductsArray(products *productsArr,int *productsCount);
 
 // display products
 void displayProduct(const products* product);
 
 //search a product by name or Id 
 products  *findproduct(products inventory[], int Numproduct);
+products *findProductsDelux(products *allProducts,int allProductsCount,history **top);
 void assigne_status(products  *product);
 void loadArray(const char fileName[],void **array,int elementSize,int *count);
 void saveArray(const char fileName[],const void *array,int elementSize,int count);
 void loadProducts(int arrNum,subCategories **arr);
 void loadSubCategories(int arrNum,categories **arr);
-
+void loadStack(history **top);
+void saveStack(history *top);
+void saveProducts(int arrNum,subCategories *arr);
+void saveSubCategories(int arrNum,categories *arr);
 //CRUD categories 
 void addCategory(categories **arr,int *elementCount);
 void removeCategory(categories **arr,int *elementCount);
 void editCategory(categories **arr,int *elementCount);
 void displayCategories(categories *categories,int count);
+int isEmptyCategories(int count);
 //CRUD subcategories
 void addSubCategory(categories **catArr,int elementCount);
 void removeSubCategory(categories **catArr,int elementcount);
 void editSubCategory(categories **catArr,int elementcount);
 void displaySubCategories(char catName[MAX_NAME_LENGTH],subCategories *subCat,int count);
+int isEmptySubCategories(int count);
 //CRUD products
 void addProduct(categories **catArr,int elementCount,products **allProducts,int *allProductsCount);
 void removeProduct(categories **catArr,int elementCount,products **allProducts,int *allProductsCount);
 void editProduct(categories **catArr,int elementCount,products **allProducts,int allProductsCount);
 void displayProducts(char subCatName[MAX_NAME_LENGTH],products *prods,int count);
+int isEmptyProducts(int count);
 //CRUD customer
 void addCustomer(Customer **customerArr,int *elementCount);
 void removeCustomer(Customer **customerArr,int *elementCount);

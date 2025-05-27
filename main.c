@@ -15,7 +15,9 @@ int main(){
     int categoryCount=0;
     categoryArr->subc=(subCategories *) malloc(sizeof(subCategories));
     loadArray("categories.dat",(void **)&categoryArr,sizeof(categories),&categoryCount);
+    loadSubCategories(categoryCount,&categoryArr);
     history *sTop=NULL;
+    loadStack(&sTop);
     int choice;
     int p=1;
     while (p)
@@ -84,7 +86,8 @@ int main(){
         }
         clearScreen();
     }
+    saveStack(sTop);
     saveArray("categories.dat",(void *)categoryArr,sizeof(categories),categoryCount);
-
+    saveSubCategories(categoryCount,categoryArr);
     return 0;
 }

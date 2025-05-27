@@ -73,62 +73,12 @@ void loadSubCategories(int arrNum,categories **arr){
     {
         (*arr)[i].subCArrCount=0;
         sprintf(fileName,"subCategories_%d.dat",i);
-        loadArray(fileName,(void **)&(*arr)[i].subc,sizeof(subCategories),&((*arr)[i].subCArrCount));
+        loadArray(fileName,(void **)&((*arr)[i].subc),sizeof(subCategories),&((*arr)[i].subCArrCount));
         loadProducts((*arr)[i].subCArrCount,&((*arr)[i].subc));
     }
 }
 
 
-
-//CRUD
-//filter categories 
-char **getUniquecategories(products inventory[],int Numproduct,int *uniqueCount){
-    char** uniquecategories = NULL;
-    *uniqueCount = 0;
-    for (int i = 0; i < Numproduct; i++)
-    {
-        bool found=false;
-        for (int j = 0; j < *uniqueCount; j++)
-        {
-            if (strcmp(inventory[i].category, uniquecategories[j]) == 0) {
-                found = true;
-                break;
-            }
-        }
-        if (!found)
-        {
-            //allocate memory for the new unique category FOUND 
-            char *newcategory=(char*)malloc(strlen(inventory[i].category)+1);
-            if (newcategory == NULL)
-            {
-                perror("Memory allocation failed ");
-                for (int k;k<*uniqueCount ;k++){
-                    free(uniquecategories[k]);
-                }
-            }
-            strcpy(newcategory, inventory[i].category);
-            //realocate memory for the "uniquecategories" array ,resizing the array so the new pointer can be added at the end 
-            char **temp =(char**)realloc(uniquecategories,(*uniqueCount +1)*sizeof(char*));
-            if(temp==NULL){
-                perror("memoy allocation failed");
-                free(newcategory);
-                // clean previously used memory
-                for (int k = 0; k < *uniqueCount; k++) {
-                    free(uniquecategories[k]);
-                }
-                free(uniquecategories);
-                return NULL;
-            }
-            uniquecategories =temp;
-            uniquecategories[*uniqueCount] = newcategory;
-            (*uniqueCount)++;
-        }
-        
-        
-    }
-    return uniquecategories;
-
-}
 //display function 
 void displayCategories(categories *categories,int count){
     printf("=== Categories ===\n");
@@ -149,16 +99,17 @@ void displaySubCategories(char catName[MAX_NAME_LENGTH],subCategories *subCat,in
 }
 
 void displayProducts(char subCatName[MAX_NAME_LENGTH],products *prods,int count){
+    
     printf("=== %s ===\n",subCatName);
     for (int i = 0; i < count; i++)
     {
-        printf("%d - %s \n",i+1,prods[i].name);
+        printf("%d - Name: %s | ID: %d \n",i+1,prods[i].name,prods[i].ID);
     }
     
 }
 //search by Id or name function and display the wanted product 
-products* findProduct(products inventory[], int Numproduct,history **top) {
-    printf("Enter the name or ID of the wanted product: ");
+products* findProduct(products inventory[], int Numproduct) {
+    printf("Enter the name or ID of the wanted product: \n");
     char input[50];
     scanf("%49s", input);
 
@@ -182,6 +133,24 @@ products* findProduct(products inventory[], int Numproduct,history **top) {
     return NULL; // Return NULL if the product is not found
 }
 
+products *findProductsDelux(products *allProducts,int allProductsCount,history **top){
+    int id;
+    printf("Enter product ID: \n");
+    scanf("%d",&id);
+    for (int i = 0; i < allProductsCount; i++)
+    {
+        if (allProducts[i].ID==id)
+        {
+            addToHistory(top,allProducts[i].name);
+            return &(allProducts[i]);
+        }
+        
+    }
+    return NULL;
+
+    
+}
+
 // Function to display the details of a product struct
 void displayProduct(const products* product) {
     if (product != NULL) {
@@ -190,6 +159,7 @@ void displayProduct(const products* product) {
         printf("Sub-category: %s\n", product->subCategory);
         printf("ID: %d\n", product->ID);
         printf("Price: %d\n", product->price);
+        printf("Stock value: %d\n",product->stock_value);
     } else {
         printf("Product not found.\n");
     }
@@ -218,22 +188,36 @@ void addCategory(categories **arr,int *elementCount){
     cat.subCArrCount=0;
     cat.subc=(subCategories *)malloc(sizeof(subCategories));
     if(cat.subc==NULL) {
-        printf("failed to allocate memory");
+        printf("failed to allocate memory \n");
         return;
     }
     temp=(categories *)realloc(*arr,((*elementCount+1))*sizeof(categories));
     if (temp==NULL)
     {
-        printf("failed to allocate memory");
+        printf("failed to allocate memory \n");
         return;
     }
     (*elementCount)++;
     *arr=temp;
     (*arr)[*elementCount-1]=cat;
 }
-
+int isEmptyCategories(int count){
+    if(count==0){
+            printf("There are no categories. \n");
+            int c=1;
+            printf("Enter 0 to return to the main menu. \n");
+            while (c)
+            {
+                scanf("%d",&c);
+            }
+            return 0;
+        }
+    return 1;
+}
 void removeCategory(categories **arr,int *elementCount){ //removing sub and prod;
     char catName[MAX_NAME_LENGTH];
+    if(isEmptyCategories(*elementCount)==0) return;
+    displayCategories(*arr,*elementCount);
     printf("Enter category name: \n");
     scanf("%s",catName);
     for (int i = 0; i < *elementCount; i++)
@@ -249,7 +233,7 @@ void removeCategory(categories **arr,int *elementCount){ //removing sub and prod
         }
     }
     if(strcmp((*arr)[(*elementCount)-1].name,catName)!=0){
-        printf("Category not found");
+        printf("Category not found \n");
         return;
     }
     if((*arr)[(*elementCount)-1].subCArrCount!=0) free((*arr)[(*elementCount)-1].subc);
@@ -259,19 +243,35 @@ void removeCategory(categories **arr,int *elementCount){ //removing sub and prod
 
 void editCategory(categories **arr,int *elementCount){
     char catName[MAX_NAME_LENGTH];
+    if(isEmptyCategories(*elementCount)==0) return;
+    displayCategories(*arr,*elementCount);
     printf("Enter category name: \n");
     scanf("%s",catName);
     for (int i = 0; i < *elementCount; i++)
     {
         if (strcmp((*arr)[i].name,catName)==0)
         {
-            printf("Enter a new name : ");
+            printf("Enter a new name : \n");
             scanf("%s",(*arr)[i].name);
             return;
         }
         
     }
-    printf("Category not found");
+    printf("Category not found\n");
+}
+
+int isEmptySubCategories(int count){
+    if(count==0){
+            printf("There are no sub-categories\n");
+            int c=1;
+            printf("Enter 0 to return to the main menu\n");
+            while (c)
+            {
+                scanf("%d",&c);
+            }
+            return 0;
+        }
+    return 1;
 }
 
 void addSubCategory(categories **catArr,int elementCount){
@@ -284,7 +284,7 @@ void addSubCategory(categories **catArr,int elementCount){
         i++;
         if (i == elementCount)
         {
-            printf("Category not found");
+            printf("Category not found\n");
             return;
         }
         
@@ -309,11 +309,13 @@ void removeSubCategory(categories **catArr,int elementCount){
             i++;
             if (i==elementCount)
             {
-                printf("Category not found");
+                printf("Category not found\n");
                 return;
             }
             
         }
+        clearScreen();
+        displaySubCategories((*catArr)[i].name,(*catArr)[i].subc,(*catArr)[i].subCArrCount);
         char subCatName[MAX_NAME_LENGTH];
         printf("Enter sub-category name: \n");
         scanf("%s",subCatName);
@@ -331,7 +333,7 @@ void removeSubCategory(categories **catArr,int elementCount){
             
         }
         if(strcmp((*catArr)[i].subc[subCsize-1].name,subCatName)!=0){
-            printf("Sub-Category not found");
+            printf("Sub-Category not found\n");
             return;
         }
         free((*catArr)[i].subc[subCsize-1].prod);
@@ -351,10 +353,11 @@ void editSubCategory(categories **catArr,int elementCount){
         i++;
     }
     if (i==elementCount) {
-        printf("Category not found");
+        printf("Category not found\n");
         return;
     }
-    
+    clearScreen();
+    displaySubCategories((*catArr)[i].name,(*catArr)[i].subc,(*catArr)[i].subCArrCount);
     char subCatName[MAX_NAME_LENGTH];
     printf("Enter sub-category name: \n");
     scanf("%s",subCatName);
@@ -368,12 +371,40 @@ void editSubCategory(categories **catArr,int elementCount){
         }
         
     }
-    printf("Sub-Category not found");
+    printf("Sub-Category not found\n");
 }
 
+int isEmptyProducts(int count){
+    if(count==0){
+            printf("There are no products.\n");
+            int c=1;
+            printf("Enter 0 to return to the main menu.\n");
+            while (c)
+            {
+                scanf("%d",&c);
+            }
+            return 0;
+        }
+    return 1;
+}
 
 void addProduct(categories **catArr,int elementCount,products **allProducts,int *allProductsCount){
     int i=0;
+    clearScreen();
+    if (elementCount==0)
+    {
+        printf("There are no categories");
+        int c=1;
+        printf("Enter 0 to go back to the main menu: \n");
+        while (c)
+        {
+            scanf("%d",&c);
+        }
+        return;
+        
+    }
+    
+    displayCategories(*catArr,elementCount);
     char catName[MAX_NAME_LENGTH];
     printf("Enter category name: \n");
     scanf("%s",catName);
@@ -392,9 +423,23 @@ void addProduct(categories **catArr,int elementCount,products **allProducts,int 
         
         return;
     }
+    clearScreen();
+    if ((*catArr)[i].subCArrCount==0)
+    {
+        printf("There are no sub-categories");
+        int c1=1;
+        printf("Enter 0 to go back to the main menu: \n");
+        while (c1)
+        {
+            scanf("%d",&c1);
+        }
+        return;
+    }
+    displaySubCategories((*catArr)[i].name,(*catArr)[i].subc,(*catArr)[i].subCArrCount);
     char subCatName[MAX_NAME_LENGTH];
     printf("Enter sub-category name: \n");
     scanf("%s",subCatName);
+    clearScreen();
     for (int j = 0; j < (*catArr)[i].subCArrCount; j++)
     {
         if (strcmp((*catArr)[i].subc[j].name,subCatName)==0)
@@ -442,6 +487,20 @@ void removeProduct(categories **catArr,int elementCount,products **allProducts,i
     char cat[MAX_NAME_LENGTH];
     char subCat[MAX_NAME_LENGTH];
     char prodName[MAX_NAME_LENGTH];
+    char name[MAX_NAME_LENGTH]="All Products";
+    if (elementCount==0)
+    {
+        printf("There are no categories");
+        int c=1;
+        printf("Enter 0 to go back to the main menu: \n");
+        while (c)
+        {
+            scanf("%d",&c);
+        }
+        return;
+        
+    }
+    displayProducts(name,*allProducts,*allProductsCount);
     printf("Enter Product name: \n");
     scanf("%s",prodName);
     for (int i = 0; i < *allProductsCount; i++)
@@ -491,8 +550,23 @@ void editProduct(categories **catArr,int elementCount,products **allProducts,int
     char cat[MAX_NAME_LENGTH];
     char subCat[MAX_NAME_LENGTH];
     char prodName[MAX_NAME_LENGTH];
+    char name[MAX_NAME_LENGTH]="All Products";
+    if (allProductsCount==0)
+    {
+        printf("There are no products");
+        int c=1;
+        printf("Enter 0 to go back to the main menu: \n");
+        while (c)
+        {
+            scanf("%d",&c);
+        }
+        return;
+        
+    }
+    displayProducts(name,*allProducts,allProductsCount);
     printf("Enter Product name: \n");
     scanf("%s",prodName);
+    clearScreen();
     for (int i = 0; i < allProductsCount; i++)
     {
     
@@ -502,6 +576,7 @@ void editProduct(categories **catArr,int elementCount,products **allProducts,int
             printf("1- Edit name.\n");
             printf("2- Edit price.\n");
             printf("3- Edit stock value.\n");
+            printf("4- Back");
             int edit;
             scanf("%d",&edit);
             switch (edit)

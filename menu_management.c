@@ -32,8 +32,22 @@ void productManagement(categories **catArr,int elementCount,products **allProduc
         break;
     case 3:
         clearScreen();
+        char name[50]="All Products.";
+        if(*allProductsCount==0){
+        printf("There are no products");
+        int c=1;
+        printf("Enter 0 to go back to the main menu:\n");
+        while (c)
+        {
+            scanf("%d",&c);
+        }
+        
+        return;
+    }
+        displayProducts(name,*allProducts,*allProductsCount);
+        printf("\n");
         int p=1;
-        displayProduct(findProduct(*allProducts,*allProductsCount,top));////BIG BLACK cPROBLEM
+        displayProduct(findProductsDelux(*allProducts,*allProductsCount,top));////BIG BLACK cPROBLEM
         printf("Enter 0 to return to the main menu: \n");
         while (p)
         {
@@ -67,10 +81,9 @@ void customerManagement(Customer **customerArr,int *elementCount){
     printf("=== Customer Management ===\n");
     printf("1 . Add Customer.\n");
     printf("2 . Edit Customer.\n");
-    printf("3 . View Customer.\n");
+    printf("3 . display Customers.\n");
     printf("4 . Delete Customer.\n");
-    printf("5 . View All Customers.\n");
-    printf("6 . Back.\n");
+    printf("5 . Back.\n");
     scanf("%d",&choice);
     switch (choice)
     {
@@ -80,6 +93,20 @@ void customerManagement(Customer **customerArr,int *elementCount){
         break;
     case 2:
         clearScreen();
+        if (*elementCount==0)
+        {
+            printf("There are no customers. \n");
+            int j=1;
+            printf("Enter 0 to return to the main menu: \n");
+            while (j)
+            {
+                scanf("%d",&j);
+            }
+            return;
+        }
+        
+        
+        displayAllCustomers(*customerArr,*elementCount);
         editCustomer(customerArr,elementCount);
         break;
     case 3:
@@ -95,6 +122,18 @@ void customerManagement(Customer **customerArr,int *elementCount){
         break;
     case 4:
         clearScreen();
+        if (*elementCount==0)
+        {
+            printf("There are no customers. \n");
+            int g=1;
+            printf("Enter 0 to return to the main menu: \n");
+            while (g)
+            {
+                scanf("%d",&g);
+            }
+            return;
+        }
+        displayAllCustomers(*customerArr,*elementCount);
         removeCustomer(customerArr,elementCount);
         break;
     case 5:
@@ -107,11 +146,6 @@ void customerManagement(Customer **customerArr,int *elementCount){
             scanf("%d",&c);
         }
         break;
-    case 6:
-        clearScreen();
-        return;
-        break;
-    
     default:
         printf("Wrong number.\n");
             int l=1;
@@ -138,14 +172,20 @@ void subCategoriesManagement(categories **catArr,int elementCount){
     {
     case 1:
         clearScreen();
+        if(isEmptyCategories(elementCount)==0) return;
+        displayCategories(*catArr,elementCount);
         addSubCategory(catArr,elementCount);
         break;
     case 2:
         clearScreen();
+        if(isEmptyCategories(elementCount)==0) return;
+        displayCategories(*catArr,elementCount);
         removeSubCategory(catArr,elementCount);
         break;
     case 3:
         clearScreen();
+        if(isEmptyCategories(elementCount)==0) return;
+        displayCategories(*catArr,elementCount);
         editSubCategory(catArr,elementCount);
         break;
     case 4:
@@ -181,6 +221,7 @@ void categoriesManagement(categories **arr,int *elementCount){
         break;
     case 2:
         clearScreen();
+
         removeCategory(arr,elementCount);
         break;
     case 3:
@@ -220,7 +261,7 @@ void browseCategories(categories *categories,int catCount,products *allProducts,
         
     }
     displayCategories(categories,catCount);
-    printf("Enter the number of the category you want to show");
+    printf("Enter the number of the category you want to show: \n");
     scanf("%d",&c1);
     clearScreen();
     printf("\n");
@@ -257,11 +298,10 @@ void browseCategories(categories *categories,int catCount,products *allProducts,
     switch (c3)
     {
     case 1:
-        printf("\n");
         int c=1;
-        displayProduct(findProduct(allProducts,allProductsCount,top));
+        displayProduct(findProductsDelux(allProducts,allProductsCount,top));
         printf("Enter 0 to go back to the main menu: \n");
-        while(c=1){
+        while(c){
             scanf("%d",&c);
         }
         break;
@@ -316,6 +356,13 @@ void displayHistory(history *top){
         printf("- %s .\n",top->element);
         top=top->next;
     }
+    int c=1;
+    printf("Enter 0 to return to the main menu");
+    while (c)
+    {
+        scanf("%d",&c);
+    }
+    
     
 }
 void clearBrowsingHistory(history **top){
@@ -330,4 +377,35 @@ void clearBrowsingHistory(history **top){
         *top=(*top)->next;
     }
     
+}
+void loadStack(history **top){
+    FILE *fp=fopen("history.dat","rb");
+    if (fp==NULL) return;
+    char data[MAX_NAME_LENGTH];
+    history *tail=NULL;
+    while (fread(&data,sizeof(char)*MAX_NAME_LENGTH,1,fp)==1)
+    {
+        history *newNode=(history *)malloc(sizeof(history));
+        strcpy(newNode->element,data);
+        if (*top==NULL)
+        {
+            *top=newNode;
+            tail=newNode;
+        }else{
+            tail->next=newNode;
+            tail=newNode;
+        }
+        
+    }
+    fclose(fp);
+}
+void saveStack(history *top){
+    FILE *fp=fopen("history.dat","wb");
+    if(fp==NULL) return;
+    while (top!=NULL)
+    {
+        fwrite(&(top->element),sizeof(char)*MAX_NAME_LENGTH,1,fp);
+        top=top->next;
+    }
+    fclose(fp);
 }
