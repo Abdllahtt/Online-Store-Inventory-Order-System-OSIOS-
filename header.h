@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
+
 
 //CONSTANTS
 
@@ -46,8 +48,9 @@ typedef enum {
 
 typedef enum {
     PENDING,
+    PROCESSING,
     PROCESSED,
-    CANCELLED
+    CANCELLED,
 }OrderStatus;
 
 typedef struct warehouse{
@@ -61,11 +64,13 @@ typedef struct customer {
 } Customer;
 typedef struct orders{
     int ID;
-    char name[MAX_NAME_LENGTH];
-    char **products;
+    char Customer_name[MAX_NAME_LENGTH];
+    char **products;// dynamic array product names
     int num_products;
     int product_capacity;
     OrderStatus order_status;
+    time_t orderPlacedTime;// added for timestamping
+    double totalAmount; // added to calculate the total amount order value
 }order;
 
 typedef struct products{
@@ -107,7 +112,8 @@ enum productStatus{
 enum orderStatus{
     PENDING,
     PROCESSED,
-    CANCELLED
+    CANCELLED,
+    SUCCEEDED
 };
 
 typedef struct Node {
@@ -158,17 +164,15 @@ void addSubCategory(char catName[MAX_NAME_LENGTH],categories *catArr,int element
 void removeSubCategory(char catName[MAX_NAME_LENGTH],char subCatName[MAX_NAME_LENGTH],categories *catArr,int elementcount);
 void editSubCategory(char catName[MAX_NAME_LENGTH],char subCatName[MAX_NAME_LENGTH],categories *catArr,int elementcount);
 
-
+//    -------------from order.c--------------------------
 //create an order node in thr queue 
 order* createOrder(int id, const char* name);
 
 //add product to the subarray in the order's node 
-int add_product_cart(order *current_order, const char *product_name);
+int add_product_cart(order *current_order, products inventory[], int numProductsInInventory);
 
 // function to see if a order's queue is empty
-bool isEmpty(OrderQueue* queue) {
-    return (queue->size == 0);
-}
+bool isEmpty(OrderQueue* queue); 
 
 // create the order's queue
  OrderQueue* create_OrderQueue();
@@ -185,6 +189,32 @@ void freeOrderMemory(order current_order);
 
 // free the entire queue 
 void freeOrderQueue(OrderQueue* queue);
+
+// --- Helper function to get status as string ---
+const char* getStatusString(OrderStatus status);
+
+// Helper to print order details
+void printOrderDetails(const order *ord);
+
+// View all orders currently in the queue (regardless of status)
+void viewAllOrders(OrderQueue* queue);
+
+// View only pending orders
+void viewPendingOrders(OrderQueue* queue);
+
+// Find an order by ID in the queue
+Node* findOrderNodeInQueue(OrderQueue* queue, int orderId);
+
+
+// Simulate processing an order by ID (changes status and deducts inventory)
+
+void processOrderById(OrderQueue* queue, int orderId);
+
+// Simulate marking an order as succeeded by ID
+void markOrderSucceededById(OrderQueue* queue, int orderId);
+
+// Simulate canceling an order by ID (returns stock)
+void cancelOrderById(OrderQueue* queue, int orderId,products inventory[],int numProductsInInventory);
 
 
 #endif
