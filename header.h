@@ -58,6 +58,7 @@ typedef enum {
     PROCESSING,
     PROCESSED,
     CANCELLED,
+    SUCCEEDED
 }OrderStatus;
 
 typedef struct warehouse{

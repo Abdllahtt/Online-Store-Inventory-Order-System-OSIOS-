@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "header.h"
+#include <time.h>
 
 void clearScreen() {
 #ifdef _WIN32
@@ -408,4 +409,114 @@ void saveStack(history *top){
         top=top->next;
     }
     fclose(fp);
+}
+
+void manageOrder(products *allProducts,int productsCount,OrderQueue* myQueue ){
+    if (myQueue == NULL) {
+        return 1; // Exit if queue creation fails
+    }
+
+    int choice;
+    int nextOrderId = 1001; // Starting ID for new orders
+
+    do {
+        printf("\n--- Online Store Management Menu ---\n");
+        printf("1. Create and Place New Order (Customer)\n");
+        printf("2. View Pending Orders (Admin)\n");
+        printf("3. Process Order by ID (Admin)\n");
+        printf("4. Mark Order as Succeeded by ID (Admin)\n");
+        printf("5. Cancel Order by ID (Admin)\n");
+        printf("6. View All Orders (Admin)\n");
+        printf("7. View Current Inventory Stock\n");
+        printf("8. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1: { // Create and Place New Order
+                char customerName[MAX_NAME_LENGTH];
+                printf("Enter customer name: ");
+                scanf("%s", customerName); // Simplified input, no spaces
+
+                order* newOrder = createOrder(nextOrderId++, customerName);
+                if (newOrder == NULL) {
+                    break;
+                }
+
+                printf("--- Adding products to Order %d (Enter 0 or 'done' to finish cart) ---\n", newOrder->ID);
+                int addMore = 1;
+                while (addMore) {
+                    printf("  Add product (type 'done' or 0 to finish adding): ");
+                    // add_product_cart will internally handle the product name/ID input
+                    if (add_product_cart(newOrder, allProducts, productsCount) == -1) {
+                         // If product not found or out of stock, give option to continue adding others
+                         printf("  Continue adding other products to this order? (1 for Yes, 0 for No): ");
+                         scanf("%d", &addMore);
+                    } else {
+                        printf("  Add another product to this order? (1 for Yes, 0 for No): ");
+                        scanf("%d", &addMore);
+                    }
+                }
+                
+                // Only enqueue if there are products in the cart
+                if (newOrder->num_products > 0) {
+                    enqueueOrder(myQueue, *newOrder);
+                    // After enqueuing, the 'newOrder' struct (local variable) is a shallow copy.
+                    // Its internal 'products' array memory needs to be freed from 'newOrder'
+                    // because the queue node now has its own deep copy.
+                    freeOrderMemory(*newOrder); // Free the temp 'newOrder' local struct's memory
+                    free(newOrder); // Free the newOrder pointer itself
+                } else {
+                    printf("Order %d has no products and will not be placed.\n", newOrder->ID);
+                    freeOrderMemory(*newOrder);
+                    free(newOrder);
+                }
+                break;
+            }
+            case 2: // View Pending Orders
+                viewPendingOrders(myQueue);
+                break;
+            case 3: { // Process Order by ID
+                int idToProcess;
+                printf("Enter Order ID to PROCESS: ");
+                scanf("%d", &idToProcess);
+                processOrderById(myQueue, idToProcess);
+                break;
+            }
+            case 4: { // Mark Order as Succeeded by ID
+                int idToSucceed;
+                printf("Enter Order ID to mark SUCCEEDED: ");
+                scanf("%d", &idToSucceed);
+                markOrderSucceededById(myQueue, idToSucceed);
+                break;
+            }
+            case 5: { // Cancel Order by ID
+                int idToCancel;
+                printf("Enter Order ID to CANCEL: ");
+                scanf("%d", &idToCancel);
+                cancelOrderById(myQueue, idToCancel,allProducts, productsCount);
+                break;
+            }
+            case 6: // View All Orders
+                viewAllOrders(myQueue);
+                break;
+            case 7: { // View Current Inventory Stock
+                printf("\n--- Current Inventory Stock ---\n");
+                for (int i = 0; i < productsCount; i++) {
+                    printf("ID: %d, Name: %s, Stock: %d, Price: %.2f\n",
+                           allProducts[i].ID, allProducts[i].name, allProducts[i].stock_value, allProducts[i].price);
+                }
+                printf("-------------------------------\n");
+                break;
+            }
+            case 8: // Exit
+                printf("Exiting program. Freeing all memory...\n");
+                break;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    } while (choice != 8);
+
+    freeOrderQueue(myQueue); // Free all allocated memory for the queue and orders
+    return 0;
 }

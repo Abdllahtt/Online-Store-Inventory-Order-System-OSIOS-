@@ -22,6 +22,7 @@ int main(){
     loadStack(&sTop);
     int choice;
     int p=1;
+    OrderQueue* myQueue = create_OrderQueue();
     while (p)
     {
         printf("=== Online Store Inventory & Orders System ===\n");
@@ -31,11 +32,8 @@ int main(){
         printf("4 . Manage Sub-Categories. \n");
         printf("5 . Browse Categories.\n");
         printf("6 . Search Products/Customers.\n");
-        printf("7 . Place Order.\n");
-        printf("8 . View Order Queue.\n");
-        printf("9 . Display Browsing History.\n");
-        printf("10 . Save Data to File.\n");
-        printf("11 . Load Data from File.\n");
+        printf("7 . Manage Orders.\n");
+        printf("8 . Display Browsing History.\n");
         printf("0. Exit.\n");
         scanf("%d",&choice);
         switch (choice)
@@ -68,16 +66,7 @@ int main(){
             break;
         case 8:
             clearScreen();
-            break;
-        case 9:
-            clearScreen();
-            displayHistory(sTop);
-            break;
-        case 10:
-            clearScreen();
-            break;
-        case 11:
-            clearScreen();
+            manageOrder(allProducts,productsCount,myQueue);
             break;
         case 0:
             p=0;
@@ -95,3 +84,5 @@ int main(){
     saveSubCategories(categoryCount,categoryArr);
     return 0;
 }
+
+
