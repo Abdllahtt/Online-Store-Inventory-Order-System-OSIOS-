@@ -23,37 +23,6 @@ typedef struct stack
     struct stack *next;
 }history;
 
-/*typedef struct tree{
-    products *product;
-    struct tree *left;
-    struct tree *right;
-}tree;*/
-
-
-/*typedef struct categoryTree{
-    // for store structure tree in modeling section
-    //idea is to create a list for main categories ex:electronics,kids section.
-    //which will be linked by next ptr
-    //down ptr is for the first child and the next of the first child will have his brothers and so on
-    char name[MAX_NAME_LENGTH];
-    struct categoryTree *next;
-    struct categoryTree *down;
-}categoryTree;*/
-
-//ENUMERATORS
-
-typedef enum {
-    WAITING,
-    UNDER_TREATMENT,
-    DISCHARGED
-}customerStatus;
-
- typedef enum {
-    AVAILABLE,
-    OUT_OF_STOCK,
-    DISCONTINUED
-}productStatus;
-
 typedef enum {
     PENDING,
     PROCESSING,
@@ -62,14 +31,10 @@ typedef enum {
     SUCCEEDED
 }OrderStatus;
 
-typedef struct warehouse{
-    //might not be used
-}warehouse;
 
 typedef struct customer {
     int ID;
     char name[MAX_NAME_LENGTH];
-    customerStatus customer_status;
 } Customer;
 typedef struct orders{
     int ID;
@@ -89,7 +54,6 @@ typedef struct products{
     int ID;
     int price;
     int stock_value;
-    productStatus product_status;
 }products;
 
 typedef struct subCategories{
