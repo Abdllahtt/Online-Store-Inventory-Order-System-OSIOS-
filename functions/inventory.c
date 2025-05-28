@@ -107,29 +107,35 @@ void displayProducts(char subCatName[MAX_NAME_LENGTH],products *prods,int count)
     
 }
 //search by Id or name function and display the wanted product 
-products* findproduct(products inventory[], int Numproduct) {
-    printf("Enter the name or ID of the wanted product: \n");
-    char input[50];
-    scanf("%49s", input);
+products* findproduct(products *allProducts, int productsCount) { // Assuming 'products' is your struct name
+    printf("Enter the name or ID of the wanted product (single word): \n");
+    char input[50]; // Adjust size as needed for product names
+
+    scanf(" %49s", input); // Read up to 49 characters, leave space for null terminator.
+
+    // Clear any remaining characters on the line (e.g., if user typed more than one word)
+    clearInputBuffer(); // Call the utility function here
 
     int wantedID = atoi(input);
 
+    // Search by ID first
+    // Assuming ID 0 is not a valid product ID or indicates conversion failure.
     if (wantedID != 0) {
-        for (int i = 0; i < Numproduct; i++) {
-            if (wantedID == inventory[i].ID) {
-                return &inventory[i]; // Return a pointer to the found struct
+        for (int i = 0; i < productsCount; i++) {
+            if (allProducts[i].ID == wantedID) { // Assuming your product struct has an 'ID' field
+                return &allProducts[i];
             }
         }
     }
 
     // If not found by ID or if the input was not a valid ID, search by name
-    for (int i = 0; i < Numproduct; i++) {
-        if (strcmp(input, inventory[i].name) == 0) {
-            return &inventory[i]; // Return a pointer to the found struct
+    for (int i = 0; i < productsCount; i++) {
+        if (strcmp(input, allProducts[i].name) == 0) { // Assuming your product struct has a 'name' field
+            return &allProducts[i];
         }
     }
 
-    return NULL; // Return NULL if the product is not found
+    return NULL; // Return NULL if no product is found
 }
 
 products *findProductsDelux(products *allProducts,int allProductsCount,history **top){

@@ -63,10 +63,11 @@ int main(){
             break;
         case 6:
             clearScreen();
+            search_function(allProducts,productsCount,customerArr,customerCount);
             break;
         case 7:
             clearScreen();
-            manageOrder(allProducts,productsCount,myQueue);
+             manageOrder(allProducts,productsCount,myQueue,&customerArr,&customerCount);
             break;
         case 8:
             clearScreen();

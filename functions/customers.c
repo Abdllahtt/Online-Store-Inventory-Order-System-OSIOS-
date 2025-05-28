@@ -100,3 +100,46 @@ void displayAllCustomers(Customer *customerArr,int elementcount){
     }
     
 }
+//find a customer
+Customer* findcustomer(Customer *customerArr, int customerCount) {
+    printf("Enter the name or ID of the wanted customer (single word): \n");
+    char input[50]; // Ensure this is large enough for your names
+
+    // The space before %49s consumes any leading whitespace, including leftover newlines.
+    // %49s reads up to 49 characters, leaving space for the null terminator.
+    scanf(" %49s", input);
+
+    // Clear any remaining characters on the line (e.g., if user typed more than one word)
+    clearInputBuffer(); // Call the utility function here
+
+    int wantedID = atoi(input);
+
+    // Search by ID first
+    // Assuming ID 0 is not a valid customer ID or indicates conversion failure.
+    if (wantedID != 0) {
+        for (int i = 0; i < customerCount; i++) {
+            if (customerArr[i].ID == wantedID) {
+                return &customerArr[i];
+            }
+        }
+    }
+
+    // If not found by ID or if the input was not a valid ID, search by name
+    for (int i = 0; i < customerCount; i++) {
+        // strcmp returns 0 if strings are identical
+        if (strcmp(input, customerArr[i].name) == 0) {
+            return &customerArr[i];
+        }
+    }
+
+    return NULL; // Return NULL if no customer is found
+}
+//display customer informations
+void displayCustomer(const Customer* customer) {
+    if (customer != NULL) {
+        printf("Name: %s\n", customer->name);
+        printf("ID: %d\n", customer->ID);
+    } else {
+        printf("Customer not found.\n");
+    }
+}

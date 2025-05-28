@@ -480,7 +480,7 @@ void saveQueue(OrderQueue *queue){
     fclose(fp);
 }
 
-int manageOrder(products *allProducts,int productsCount,OrderQueue* myQueue ){
+int manageOrder(products *allProducts,int productsCount,OrderQueue* myQueue ,Customer **customerArr,int *customerCount){
     if (myQueue == NULL) {
         return 1; // Exit if queue creation fails
     }
@@ -503,11 +503,11 @@ int manageOrder(products *allProducts,int productsCount,OrderQueue* myQueue ){
 
         switch (choice) {
             case 1: { // Create and Place New Order
-                char customerName[MAX_NAME_LENGTH];
-                printf("Enter customer name: ");
-                scanf("%s", customerName); // Simplified input, no spaces
+                clearScreen();
+                addCustomer(customerArr,customerCount);
+                const char *customer_name = (*customerArr)[*customerCount - 1].name;
 
-                order* newOrder = createOrder(nextOrderId++, customerName);
+                order* newOrder = createOrder(nextOrderId++,customer_name);
                 if (newOrder == NULL) {
                     break;
                 }
@@ -543,9 +543,11 @@ int manageOrder(products *allProducts,int productsCount,OrderQueue* myQueue ){
                 break;
             }
             case 2: // View Pending Orders
+            clearScreen();
                 viewPendingOrders(myQueue);
                 break;
             case 3: { // Process Order by ID
+                clearScreen();
                 int idToProcess;
                 printf("Enter Order ID to PROCESS: ");
                 scanf("%d", &idToProcess);
@@ -553,6 +555,7 @@ int manageOrder(products *allProducts,int productsCount,OrderQueue* myQueue ){
                 break;
             }
             case 4: { // Mark Order as Succeeded by ID
+                clearScreen();
                 int idToSucceed;
                 printf("Enter Order ID to mark SUCCEEDED: ");
                 scanf("%d", &idToSucceed);
@@ -560,6 +563,7 @@ int manageOrder(products *allProducts,int productsCount,OrderQueue* myQueue ){
                 break;
             }
             case 5: { // Cancel Order by ID
+                clearScreen();
                 int idToCancel;
                 printf("Enter Order ID to CANCEL: ");
                 scanf("%d", &idToCancel);
@@ -567,18 +571,21 @@ int manageOrder(products *allProducts,int productsCount,OrderQueue* myQueue ){
                 break;
             }
             case 6: // View All Orders
+            clearScreen();
                 viewAllOrders(myQueue);
                 break;
             case 7: { // View Current Inventory Stock
+                clearScreen();
                 printf("\n--- Current Inventory Stock ---\n");
                 for (int i = 0; i < productsCount; i++) {
-                    printf("ID: %d, Name: %s, Stock: %d, Price: %.2f\n",
+                    printf("ID: %d, Name: %s, Stock: %d, Price: %d\n",
                            allProducts[i].ID, allProducts[i].name, allProducts[i].stock_value, allProducts[i].price);
                 }
                 printf("-------------------------------\n");
                 break;
             }
             case 8: // Exit
+            clearScreen();
                 printf("Exiting program. Freeing all memory...\n");
                 break;
             default:
@@ -588,4 +595,41 @@ int manageOrder(products *allProducts,int productsCount,OrderQueue* myQueue ){
 
     //freeOrderQueue(myQueue); // Free all allocated memory for the queue and orders
     return 0;
+}
+// search function 
+void clearInputBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+void search_function(products *allproduct, int productsCount, Customer *customerArr, int customerCount){
+    int a;
+    printf("Type 1 to search a product or 2 to search a customer: ");
+    scanf("%d", &a);
+    clearInputBuffer(); // <--- THIS IS CRUCIAL: Clears newline after 'a' is read
+
+    switch (a)
+    {
+        case 1:
+            // No clearScreen() here anymore, it's at the end of search_function
+            products *wanted_product = findproduct(allproduct, productsCount);
+            displayProduct(wanted_product); // Assuming you have displayProduct
+            break;
+        case 2:
+            // No clearScreen() here anymore
+            Customer *wanted_customer = findcustomer(customerArr, customerCount);
+            displayCustomer(wanted_customer); // Assuming you have displayCustomer
+            break;
+        default:
+            printf("Invalid choice. Please type 1 or 2.\n");
+            printf("Press Enter to continue...");
+            clearInputBuffer();
+
+            break;
+    }
+
+    // --- Add a pause here after the search results are displayed ---
+    printf("\nPress Enter to return to the main menu...");
+    clearInputBuffer(); // This will wait for the user to press Enter
+    clearScreen();
+    // --- Clear screen after user has read the info and pressed Enter ---
 }
