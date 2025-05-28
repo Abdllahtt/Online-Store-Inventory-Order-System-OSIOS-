@@ -468,8 +468,6 @@ void addProduct(categories **catArr,int elementCount,products **allProducts,int 
 
             printf("Enter product's price : \n");
             scanf("%d",&new.price);
-            printf("Enter product's status : \n");
-            scanf("%d",&new.product_status);
             printf("Enter product's stock value : \n");
             scanf("%d",&new.stock_value);
             printf("Enter product's ID : \n");
