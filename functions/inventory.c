@@ -169,20 +169,6 @@ void displayProduct(const products* product) {
         printf("Product not found.\n");
     }
 }
-void assigne_status(products  *product){
-    if(product->stock_value ==0){
-        product ->product_status=OUT_OF_STOCK;
-    }
-    else if(product->stock_value ==-1){
-        product->product_status=DISCONTINUED;
-        
-    }
-    else if(product->stock_value >0){
-        product ->product_status=AVAILABLE;
-        
-    }
-}
-
 
 // STILL IN PRODUCTION---------------------------------------------------------------------------------------------------------------------------------------
 void addCategory(categories **arr,int *elementCount){
