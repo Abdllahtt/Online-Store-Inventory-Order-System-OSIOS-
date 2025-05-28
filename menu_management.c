@@ -48,7 +48,7 @@ void productManagement(categories **catArr,int elementCount,products **allProduc
         displayProducts(name,*allProducts,*allProductsCount);
         printf("\n");
         int p=1;
-        displayProduct(findProductsDelux(*allProducts,*allProductsCount,top));////BIG BLACK cPROBLEM
+        displayProduct(findProductsDelux(*allProducts,*allProductsCount,top));
         printf("Enter 0 to return to the main menu: \n");
         while (p)
         {
@@ -515,7 +515,7 @@ int manageOrder(products *allProducts,int productsCount,OrderQueue* myQueue ,Cus
                 printf("--- Adding products to Order %d (Enter 0 or 'done' to finish cart) ---\n", newOrder->ID);
                 int addMore = 1;
                 while (addMore) {
-                    printf("  Add product (type 'done' or 0 to finish adding): ");
+
                     // add_product_cart will internally handle the product name/ID input
                     if (add_product_cart(newOrder, allProducts, productsCount) == -1) {
                          // If product not found or out of stock, give option to continue adding others
